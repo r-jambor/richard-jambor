@@ -414,6 +414,33 @@
     padding: 3px 9px;
     border-radius: 4px;
   }
+  /* Clickable project card */
+  .project-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .project-link-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--blue);
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .project-card:hover .project-link-bar {
+    opacity: 1;
+    transform: none;
+  }
+  .project-link-bar svg { width: 12px; height: 12px; }
+
   .confidential-note {
     font-size: 12px;
     color: var(--text-3);
@@ -924,207 +951,204 @@
   <div class="container">
     <div class="projects-header">
       <div>
-        <p class="section-label reveal">Selected Projects</p>
-        <h2 class="section-title reveal reveal-delay-1">Built from real problems.</h2>
+        <p class="section-label reveal">Projects</p>
+        <h2 class="section-title reveal reveal-delay-1">Built from real problems or just for fun.</h2>
       </div>
     </div>
     <div class="projects-grid">
 
-      <!-- Project 1: BudFlow -->
       <div class="project-card reveal">
-        <div class="project-card-header">
-          <span class="project-num">01</span>
-          <span class="project-type-badge badge-shipped">Shipped Product</span>
-        </div>
-        <div class="project-body">
-          <h3 class="project-title">BudFlow — iOS Finance Tracking App</h3>
-          <p class="project-desc">Personal finance tracking app built with Swift and SwiftUI, published on the App Store. Clean native iOS experience with real-time budget tracking and spending insights.</p>
-        </div>
-        <div class="project-visual">
-          <div class="iphone-row">
-            <!-- Screen 1: Dashboard -->
-            <div class="iphone-frame">
-              <div class="iphone-notch"></div>
-              <div class="iphone-screen screen-dashboard">
-                <svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                  <rect width="80" height="120" fill="#1A1F2E"/>
-                  <text x="10" y="22" font-family="monospace" font-size="5.5" fill="#666B7A">Balance</text>
-                  <text x="10" y="34" font-family="monospace" font-size="9" fill="white" font-weight="600">€24 530</text>
-                  <rect x="10" y="40" width="60" height="30" rx="6" fill="#252B3B"/>
-                  <text x="16" y="52" font-family="monospace" font-size="4.5" fill="#666B7A">Income</text>
-                  <text x="16" y="62" font-family="monospace" font-size="7" fill="#4ADE80">+€3 200</text>
-                  <text x="44" y="52" font-family="monospace" font-size="4.5" fill="#666B7A">Expenses</text>
-                  <text x="44" y="62" font-family="monospace" font-size="7" fill="#F87171">-€1 420</text>
-                  <rect x="10" y="76" width="10" height="18" rx="2" fill="#3B82F6" opacity="0.8"/>
-                  <rect x="23" y="84" width="10" height="10" rx="2" fill="#3B82F6" opacity="0.5"/>
-                  <rect x="36" y="78" width="10" height="16" rx="2" fill="#3B82F6" opacity="0.8"/>
-                  <rect x="49" y="80" width="10" height="14" rx="2" fill="#3B82F6" opacity="0.6"/>
-                  <rect x="62" y="72" width="10" height="22" rx="2" fill="#3B82F6"/>
-                </svg>
+        <a href="budflow.html" class="project-card-link">
+          <div class="project-card-header">
+            <span class="project-num">01</span>
+            <span class="project-type-badge badge-shipped">Published App</span>
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">BudFlow — iOS Finance Tracking App</h3>
+            <p class="project-desc">Personal finance tracking app built with Swift and SwiftUI, published on the App Store. Visualize income, expenses and budgets with clear charts and summaries.</p>
+          </div>
+          <div class="project-visual">
+            <div class="iphone-row">
+              <div class="iphone-frame">
+                <div class="iphone-notch"></div>
+                <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/ff/94/6d/ff946d8f-08d0-4496-47aa-0a3dc3e314d1/IMG_1045_2.jpg/400x800bb.png" alt="BudFlow dashboard screen" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"/>
+                <div class="iphone-screen screen-dashboard" style="display:none;">
+                  <svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                    <rect width="80" height="120" fill="#1A1F2E"/>
+                    <text x="10" y="22" font-family="monospace" font-size="5.5" fill="#666B7A">Balance</text>
+                    <text x="10" y="34" font-family="monospace" font-size="9" fill="white" font-weight="600">€24 530</text>
+                    <rect x="10" y="40" width="60" height="30" rx="6" fill="#252B3B"/>
+                    <text x="16" y="52" font-family="monospace" font-size="4.5" fill="#666B7A">Income</text>
+                    <text x="16" y="62" font-family="monospace" font-size="7" fill="#4ADE80">+€3 200</text>
+                    <text x="44" y="52" font-family="monospace" font-size="4.5" fill="#666B7A">Expenses</text>
+                    <text x="44" y="62" font-family="monospace" font-size="7" fill="#F87171">-€1 420</text>
+                    <rect x="10" y="76" width="10" height="18" rx="2" fill="#3B82F6" opacity="0.8"/>
+                    <rect x="23" y="84" width="10" height="10" rx="2" fill="#3B82F6" opacity="0.5"/>
+                    <rect x="36" y="78" width="10" height="16" rx="2" fill="#3B82F6" opacity="0.8"/>
+                    <rect x="49" y="80" width="10" height="14" rx="2" fill="#3B82F6" opacity="0.6"/>
+                    <rect x="62" y="72" width="10" height="22" rx="2" fill="#3B82F6"/>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <!-- Screen 2: Transactions -->
-            <div class="iphone-frame">
-              <div class="iphone-notch"></div>
-              <div class="iphone-screen screen-transactions">
-                <svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                  <rect width="80" height="120" fill="#0F1B2D"/>
-                  <text x="10" y="18" font-family="monospace" font-size="6" fill="white" font-weight="600">Expenses</text>
-                  <rect x="10" y="24" width="60" height="14" rx="4" fill="#1A2840"/>
-                  <circle cx="18" cy="31" r="4" fill="#F87171"/>
-                  <text x="25" y="34" font-family="monospace" font-size="4.5" fill="#9CA3AF">Food</text>
-                  <text x="55" y="34" font-family="monospace" font-size="4.5" fill="white">-€48</text>
-                  <rect x="10" y="42" width="60" height="14" rx="4" fill="#1A2840"/>
-                  <circle cx="18" cy="49" r="4" fill="#FBBF24"/>
-                  <text x="25" y="52" font-family="monospace" font-size="4.5" fill="#9CA3AF">Transport</text>
-                  <text x="55" y="52" font-family="monospace" font-size="4.5" fill="white">-€12</text>
-                  <rect x="10" y="60" width="60" height="14" rx="4" fill="#1A2840"/>
-                  <circle cx="18" cy="67" r="4" fill="#A78BFA"/>
-                  <text x="25" y="70" font-family="monospace" font-size="4.5" fill="#9CA3AF">Shopping</text>
-                  <text x="55" y="70" font-family="monospace" font-size="4.5" fill="white">-€94</text>
-                  <rect x="10" y="78" width="60" height="14" rx="4" fill="#1A2840"/>
-                  <circle cx="18" cy="85" r="4" fill="#34D399"/>
-                  <text x="25" y="88" font-family="monospace" font-size="4.5" fill="#9CA3AF">Coffee</text>
-                  <text x="55" y="88" font-family="monospace" font-size="4.5" fill="white">-€4.20</text>
-                </svg>
+              <div class="iphone-frame">
+                <div class="iphone-notch"></div>
+                <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/4c/be/b8/4cbeb830-fed0-5315-6e8a-a49bafb63049/IMG_1043_2.jpg/400x800bb.png" alt="BudFlow expenses screen" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"/>
+                <div class="iphone-screen screen-transactions" style="display:none;">
+                  <svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                    <rect width="80" height="120" fill="#0F1B2D"/>
+                    <text x="10" y="18" font-family="monospace" font-size="6" fill="white" font-weight="600">Expenses</text>
+                    <rect x="10" y="24" width="60" height="14" rx="4" fill="#1A2840"/>
+                    <circle cx="18" cy="31" r="4" fill="#F87171"/>
+                    <text x="25" y="34" font-family="monospace" font-size="4.5" fill="#9CA3AF">Food</text>
+                    <text x="55" y="34" font-family="monospace" font-size="4.5" fill="white">-€48</text>
+                    <rect x="10" y="42" width="60" height="14" rx="4" fill="#1A2840"/>
+                    <circle cx="18" cy="49" r="4" fill="#FBBF24"/>
+                    <text x="25" y="52" font-family="monospace" font-size="4.5" fill="#9CA3AF">Transport</text>
+                    <text x="55" y="52" font-family="monospace" font-size="4.5" fill="white">-€12</text>
+                    <rect x="10" y="60" width="60" height="14" rx="4" fill="#1A2840"/>
+                    <circle cx="18" cy="67" r="4" fill="#A78BFA"/>
+                    <text x="25" y="70" font-family="monospace" font-size="4.5" fill="#9CA3AF">Shopping</text>
+                    <text x="55" y="70" font-family="monospace" font-size="4.5" fill="white">-€94</text>
+                    <rect x="10" y="78" width="60" height="14" rx="4" fill="#1A2840"/>
+                    <circle cx="18" cy="85" r="4" fill="#34D399"/>
+                    <text x="25" y="88" font-family="monospace" font-size="4.5" fill="#9CA3AF">Coffee</text>
+                    <text x="55" y="88" font-family="monospace" font-size="4.5" fill="white">-€4.20</text>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <!-- Screen 3: Budget Circles -->
-            <div class="iphone-frame">
-              <div class="iphone-notch"></div>
-              <div class="iphone-screen screen-budget">
-                <svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                  <rect width="80" height="120" fill="#1A1228"/>
-                  <text x="10" y="18" font-family="monospace" font-size="6" fill="white" font-weight="600">Budget</text>
-                  <text x="10" y="26" font-family="monospace" font-size="4" fill="#666">March 2024</text>
-                  <circle cx="40" cy="58" r="24" fill="none" stroke="#2D2440" stroke-width="7"/>
-                  <circle cx="40" cy="58" r="24" fill="none" stroke="#7C3AED" stroke-width="7" stroke-dasharray="94 57" stroke-dashoffset="38" stroke-linecap="round"/>
-                  <text x="40" y="55" text-anchor="middle" font-family="monospace" font-size="8" fill="white" font-weight="600">€2 300</text>
-                  <text x="40" y="63" text-anchor="middle" font-family="monospace" font-size="4" fill="#9CA3AF">of €3 000</text>
-                  <text x="14" y="96" font-family="monospace" font-size="4" fill="#9CA3AF">Remaining</text>
-                  <text x="14" y="104" font-family="monospace" font-size="6" fill="#4ADE80" font-weight="600">€700</text>
-                </svg>
+              <div class="iphone-frame">
+                <div class="iphone-notch"></div>
+                <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/06/ac/c5/06acc54c-8c23-a43d-745b-af2db176bc40/IMG_1044_2.jpg/400x800bb.png" alt="BudFlow budget screen" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"/>
+                <div class="iphone-screen screen-budget" style="display:none;">
+                  <svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                    <rect width="80" height="120" fill="#1A1228"/>
+                    <text x="10" y="18" font-family="monospace" font-size="6" fill="white" font-weight="600">Budget</text>
+                    <text x="10" y="26" font-family="monospace" font-size="4" fill="#666">March 2024</text>
+                    <circle cx="40" cy="58" r="24" fill="none" stroke="#2D2440" stroke-width="7"/>
+                    <circle cx="40" cy="58" r="24" fill="none" stroke="#7C3AED" stroke-width="7" stroke-dasharray="94 57" stroke-dashoffset="38" stroke-linecap="round"/>
+                    <text x="40" y="55" text-anchor="middle" font-family="monospace" font-size="8" fill="white" font-weight="600">€2 300</text>
+                    <text x="40" y="63" text-anchor="middle" font-family="monospace" font-size="4" fill="#9CA3AF">of €3 000</text>
+                    <text x="14" y="96" font-family="monospace" font-size="4" fill="#9CA3AF">Remaining</text>
+                    <text x="14" y="104" font-family="monospace" font-size="6" fill="#4ADE80" font-weight="600">€700</text>
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="project-footer">
-          <div class="tech-stack">
-            <span class="tech-chip">Swift</span>
-            <span class="tech-chip">SwiftUI</span>
-            <span class="tech-chip">SwiftData</span>
-            <span class="tech-chip">App Store Connect</span>
+          <div class="project-footer">
+            <div class="tech-stack">
+              <span class="tech-chip">Swift</span>
+              <span class="tech-chip">SwiftUI</span>
+              <span class="tech-chip">SwiftData</span>
+              <span class="tech-chip">App Store Connect</span>
+            </div>
+            <div class="project-link-bar">
+              View Project Details
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </div>
           </div>
-        </div>
+        </a>
       </div>
 
-      <!-- Project 2: Internal Tool -->
       <div class="project-card reveal reveal-delay-1">
-        <div class="project-card-header">
-          <span class="project-num">02</span>
-          <span class="project-type-badge badge-internal">Internal Tool</span>
-        </div>
-        <div class="project-body">
-          <h3 class="project-title">Internal Process Validation Web App</h3>
-          <p class="project-desc">Google Apps Script web application built to support tracking and validation of carton placement in a production hall. Reduces manual errors and speeds up floor-level verification.</p>
-        </div>
-        <div class="project-visual">
-          <div class="tool-mockup">
-            <div class="tool-bar">
-              <div class="tool-bar-dots">
-                <span></span><span></span><span></span>
+        <a href="internal-tool.html" class="project-card-link">
+          <div class="project-card-header">
+            <span class="project-num">02</span>
+            <span class="project-type-badge badge-internal">Internal Tool</span>
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">Internal Process Validation Web App</h3>
+            <p class="project-desc">Google Apps Script web application built to support tracking and validation of carton placement in a production hall. Reduces manual errors and speeds up floor-level verification.</p>
+          </div>
+          <div class="project-visual">
+            <div class="tool-mockup">
+              <div class="tool-bar">
+                <div class="tool-bar-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="tool-bar-title">Validation Dashboard</div>
               </div>
-              <div class="tool-bar-title">Validation Dashboard</div>
-            </div>
-            <div class="tool-content">
-              <div class="tool-stats-row">
-                <div class="tool-stat">
-                  <span class="tool-stat-num">128</span>
-                  <div class="tool-stat-label">Today</div>
+              <div class="tool-content">
+                <div class="tool-stats-row">
+                  <div class="tool-stat">
+                    <span class="tool-stat-num">128</span>
+                    <div class="tool-stat-label">Today</div>
+                  </div>
+                  <div class="tool-stat">
+                    <span class="tool-stat-num">12</span>
+                    <div class="tool-stat-label">Pending</div>
+                  </div>
+                  <div class="tool-stat">
+                    <span class="tool-stat-num">3</span>
+                    <div class="tool-stat-label">Issues</div>
+                  </div>
                 </div>
-                <div class="tool-stat">
-                  <span class="tool-stat-num">12</span>
-                  <div class="tool-stat-label">Pending</div>
-                </div>
-                <div class="tool-stat">
-                  <span class="tool-stat-num">3</span>
-                  <div class="tool-stat-label">Issues</div>
-                </div>
+                <table class="tool-table">
+                  <tr><td>#1003</td><td>ORD-2314</td><td>L2</td><td class="status-valid">Valid</td><td>09:12</td></tr>
+                  <tr><td>#1004</td><td>ORD-2310</td><td>L1</td><td class="status-invalid">Error</td><td>09:07</td></tr>
+                  <tr><td>#1003</td><td>ORD-2311</td><td>L3</td><td class="status-valid">Valid</td><td>08:41</td></tr>
+                </table>
               </div>
-              <table class="tool-table">
-                <tr>
-                  <td>#1003</td>
-                  <td>ORD-2314</td>
-                  <td>L2</td>
-                  <td class="status-valid">Valid</td>
-                  <td>09:12</td>
-                </tr>
-                <tr>
-                  <td>#1004</td>
-                  <td>ORD-2310</td>
-                  <td>L1</td>
-                  <td class="status-invalid">Error</td>
-                  <td>09:07</td>
-                </tr>
-                <tr>
-                  <td>#1003</td>
-                  <td>ORD-2311</td>
-                  <td>L3</td>
-                  <td class="status-valid">Valid</td>
-                  <td>08:41</td>
-                </tr>
-              </table>
             </div>
           </div>
-        </div>
-        <div class="project-footer">
-          <div class="tech-stack">
-            <span class="tech-chip">Google Apps Script</span>
-            <span class="tech-chip">JavaScript</span>
-            <span class="tech-chip">Google Workspace</span>
+          <div class="project-footer">
+            <div class="tech-stack">
+              <span class="tech-chip">Google Apps Script</span>
+              <span class="tech-chip">JavaScript</span>
+              <span class="tech-chip">Google Workspace</span>
+            </div>
+            <div class="confidential-note">Described at a high level due to company confidentiality.</div>
+            <div class="project-link-bar">
+              View Project Details
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </div>
           </div>
-          <div class="confidential-note">Described at a high level due to company confidentiality.</div>
-        </div>
+        </a>
       </div>
 
-      <!-- Project 3: AI Workflow -->
       <div class="project-card reveal reveal-delay-2">
-        <div class="project-card-header">
-          <span class="project-num">03</span>
-          <span class="project-type-badge badge-ai">AI Workflow Lab</span>
-        </div>
-        <div class="project-body">
-          <h3 class="project-title">AI Video Generation Workflow Tool</h3>
-          <p class="project-desc">AI-powered workflow tool for automated video generation. Chains local and cloud AI models to go from a text prompt all the way to a finished video — without manual intervention at each step.</p>
-        </div>
-        <div class="project-visual">
-          <div class="workflow-diagram">
-            <div class="wf-row">
-              <div class="wf-node wf-node-active">Prompt</div>
-              <div class="wf-arrow">→</div>
-              <div class="wf-node">Script</div>
-              <div class="wf-arrow">→</div>
-              <div class="wf-node">Voice</div>
-            </div>
-            <div style="text-align:center; padding: 4px 0; color: var(--text-3); font-size: 12px; font-family: 'IBM Plex Mono', monospace;">↓</div>
-            <div class="wf-row">
-              <div class="wf-node">Output</div>
-              <div class="wf-arrow">←</div>
-              <div class="wf-node">Assembly</div>
-              <div class="wf-arrow">←</div>
-              <div class="wf-node">Visuals</div>
+        <a href="ai-video-tool.html" class="project-card-link">
+          <div class="project-card-header">
+            <span class="project-num">03</span>
+            <span class="project-type-badge badge-ai">AI Workflow Lab</span>
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">AI Video Generation Workflow Tool</h3>
+            <p class="project-desc">AI-powered workflow tool for automated video generation. Chains local and cloud AI models to go from a text prompt all the way to a finished video — without manual intervention at each step.</p>
+          </div>
+          <div class="project-visual">
+            <div class="workflow-diagram">
+              <div class="wf-row">
+                <div class="wf-node wf-node-active">Prompt</div>
+                <div class="wf-arrow">→</div>
+                <div class="wf-node">Script</div>
+                <div class="wf-arrow">→</div>
+                <div class="wf-node">Voice</div>
+              </div>
+              <div style="text-align:center; padding: 4px 0; color: var(--text-3); font-size: 12px; font-family: 'IBM Plex Mono', monospace;">↓</div>
+              <div class="wf-row">
+                <div class="wf-node">Output</div>
+                <div class="wf-arrow">←</div>
+                <div class="wf-node">Assembly</div>
+                <div class="wf-arrow">←</div>
+                <div class="wf-node">Visuals</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="project-footer">
-          <div class="tech-stack">
-            <span class="tech-chip">Python</span>
-            <span class="tech-chip">AI APIs</span>
-            <span class="tech-chip">Local AI Models</span>
-            <span class="tech-chip">FFmpeg</span>
-            <span class="tech-chip">Automation</span>
+          <div class="project-footer">
+            <div class="tech-stack">
+              <span class="tech-chip">Python</span>
+              <span class="tech-chip">AI APIs</span>
+              <span class="tech-chip">Local AI Models</span>
+              <span class="tech-chip">FFmpeg</span>
+              <span class="tech-chip">Automation</span>
+            </div>
+            <div class="project-link-bar">
+              View Project Details
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </div>
           </div>
-        </div>
+        </a>
       </div>
 
     </div>
