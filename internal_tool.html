@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internal Process Validation Web App · Richard Jambor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #1A5CFF; --blue-light: #EEF3FF; --blue-mid: #D0DEFF; --blue-dark: #0A2A8A;
+    --green: #16A34A; --green-light: #DCFCE7;
+    --amber: #92400E; --amber-light: #FEF3C7;
+    --text: #0D0D0D; --text-2: #5A5A5A; --text-3: #9A9A9A;
+    --border: #E4E4E4; --border-strong: #C8C8C8;
+    --surface: #FFFFFF; --surface-2: #F7F7F6; --surface-3: #F0F0EE;
+    --radius: 10px; --radius-lg: 16px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: #FAFAF9; color: var(--text); font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(250,250,249,0.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 52px; max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-monogram { width: 32px; height: 32px; background: var(--text); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: -0.5px; }
+  .nav-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .nav-right { display: flex; align-items: center; gap: 4px; }
+  .nav-links { display: flex; gap: 2px; list-style: none; }
+  .nav-links a { font-size: 13px; font-family: 'IBM Plex Mono', monospace; color: var(--text-2); text-decoration: none; padding: 5px 12px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+  .nav-links a:hover { background: var(--surface-3); color: var(--text); }
+  .nav-links a.active { color: var(--blue); background: var(--blue-light); }
+  .nav-back { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-2); text-decoration: none; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); transition: background 0.15s, border-color 0.15s; margin-left: 8px; white-space: nowrap; }
+  .nav-back:hover { background: var(--surface-3); border-color: var(--border-strong); }
+  .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; }
+  .hamburger span { display: block; width: 20px; height: 1.5px; background: var(--text); margin: 4px 0; }
+  .mobile-nav { display: none; position: fixed; inset: 0; background: rgba(250,250,249,0.97); z-index: 200; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav a { font-family: 'Instrument Serif', serif; font-size: 28px; color: var(--text); text-decoration: none; padding: 10px 24px; transition: color 0.15s; }
+  .mobile-nav a:hover { color: var(--blue); }
+  .mobile-nav-close { position: absolute; top: 16px; right: 24px; background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text); font-family: sans-serif; }
+
+  /* ── SHARED ── */
+  .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
+  .eyebrow-dot { display: inline-flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin-bottom: 18px; }
+  .eyebrow-dot::before { content: ''; display: block; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+  .btn-primary { background: var(--blue); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: background 0.15s, transform 0.1s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: #0042DD; transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 400; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: background 0.15s, border-color 0.15s; font-family: 'DM Sans', sans-serif; }
+  .btn-secondary:hover { background: var(--surface-3); border-color: #AAAAAA; }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.visible { opacity: 1; transform: none; }
+  .rd1 { transition-delay: 0.07s; } .rd2 { transition-delay: 0.14s; } .rd3 { transition-delay: 0.21s; } .rd4 { transition-delay: 0.28s; }
+  .section { padding: 64px 0; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  .hero { padding: 68px 0 64px; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 360px; gap: 52px; align-items: start; }
+  .hero-title { font-family: 'Instrument Serif', serif; font-size: clamp(34px, 4.5vw, 54px); font-weight: 400; line-height: 1.05; letter-spacing: -1.5px; color: var(--text); margin-bottom: 16px; }
+  .hero-sub { font-size: 16px; color: var(--text-2); line-height: 1.6; max-width: 480px; margin-bottom: 10px; font-weight: 500; }
+  .hero-desc { font-size: 15px; color: var(--text-2); line-height: 1.75; max-width: 480px; margin-bottom: 24px; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
+  .confidential-bar { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; max-width: 420px; }
+  .confidential-bar svg { width: 14px; height: 14px; color: var(--text-3); flex-shrink: 0; }
+  .confidential-bar span { font-size: 13px; color: var(--text-3); font-style: italic; }
+
+  /* SNAPSHOT CARD */
+  .snapshot-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .snapshot-header { padding: 13px 18px; border-bottom: 1px solid var(--border); background: var(--surface-2); display: flex; align-items: center; gap: 8px; }
+  .snapshot-header svg { width: 14px; height: 14px; color: var(--text-3); flex-shrink: 0; }
+  .snapshot-header-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; color: var(--text); }
+  .snapshot-row { display: flex; align-items: center; padding: 10px 18px; border-bottom: 1px solid var(--border); gap: 12px; transition: background 0.1s; }
+  .snapshot-row:last-child { border-bottom: none; }
+  .snapshot-row:hover { background: var(--surface-2); }
+  .snapshot-icon { width: 15px; height: 15px; flex-shrink: 0; color: var(--text-3); }
+  .snapshot-key { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); width: 86px; flex-shrink: 0; }
+  .snapshot-val { font-size: 13px; color: var(--text); }
+  .badge-amber { display: inline-block; background: var(--amber-light); color: var(--amber); font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 4px; }
+  .badge-blue { display: inline-block; background: var(--blue-light); color: var(--blue-dark); font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 4px; }
+  .badge-green { display: inline-block; background: var(--green-light); color: var(--green); font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 4px; }
+
+  /* ── ORIGIN ── */
+  .origin-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+  .origin-main { padding-right: 40px; }
+  .origin-main h2 { font-family: 'Instrument Serif', serif; font-size: clamp(20px, 2.2vw, 26px); letter-spacing: -0.4px; line-height: 1.2; margin-bottom: 14px; }
+  .origin-main p { font-size: 14px; color: var(--text-2); line-height: 1.75; }
+  .origin-card { border-left: 1px solid var(--border); padding-left: 32px; }
+  .origin-card.gap { margin-left: 32px; }
+  .origin-card-label { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+  .icon-wrap { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .icon-wrap.red { background: #FEE2E2; } .icon-wrap.red svg { color: #DC2626; }
+  .icon-wrap.green { background: var(--green-light); } .icon-wrap.green svg { color: var(--green); }
+  .icon-wrap svg { width: 14px; height: 14px; }
+  .origin-card p { font-size: 13.5px; color: var(--text-2); line-height: 1.7; }
+
+  /* ── KEY CAPABILITIES ── */
+  .capabilities-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; }
+  .cap-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s; }
+  .cap-card:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.06); }
+  .cap-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .cap-icon svg { width: 18px; height: 18px; color: var(--blue); }
+  .cap-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 7px; line-height: 1.3; }
+  .cap-desc { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+
+  /* ── TECH IMPLEMENTATION ── */
+  .tech-grid { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1.4fr; gap: 0; }
+  .tech-col { padding-right: 28px; border-right: 1px solid var(--border); margin-right: 28px; }
+  .tech-col:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .tech-col-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .tech-stack-item { display: flex; align-items: center; gap: 9px; padding: 7px 0; font-size: 13px; color: var(--text-2); border-bottom: 1px solid var(--border); }
+  .tech-stack-item:last-child { border-bottom: none; }
+  .tech-lang-badge { width: 20px; height: 20px; border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 500; color: white; }
+  .badge-gas { background: #4285F4; }
+  .badge-js { background: #F7DF1E; color: #000; }
+  .badge-gws { background: #34A853; }
+  .module-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; color: var(--text-2); }
+  .module-item::before { content: ''; display: block; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+  .delivery-note { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 12px; }
+  .delivery-note span { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); }
+  .arch-flow { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .arch-node { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text); text-align: center; line-height: 1.35; }
+  .arch-arrow { font-size: 11px; color: var(--text-3); padding: 0 2px; flex-shrink: 0; }
+
+  /* ── WHAT THIS DEMONSTRATES ── */
+  .demonstrates-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; }
+  .demo-card { display: flex; gap: 14px; align-items: flex-start; }
+  .demo-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .demo-icon svg { width: 16px; height: 16px; color: var(--blue); }
+  .demo-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 5px; line-height: 1.3; }
+  .demo-desc { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+
+  /* ── OUTCOME ── */
+  .outcome-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; display: flex; gap: 24px; align-items: flex-start; }
+  .outcome-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .outcome-icon svg { width: 20px; height: 20px; color: var(--blue); }
+  .outcome-body { flex: 1; }
+  .outcome-title { font-family: 'Instrument Serif', serif; font-size: 20px; letter-spacing: -0.3px; margin-bottom: 10px; color: var(--blue); }
+  .outcome-text { font-size: 14px; color: var(--text-2); line-height: 1.75; }
+  .outcome-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-left: auto; padding-left: 32px; align-self: center; flex-shrink: 0; }
+  .outcome-tag { font-size: 12px; font-family: 'IBM Plex Mono', monospace; padding: 4px 10px; border-radius: 5px; border: 1px solid var(--border); white-space: nowrap; }
+  .outcome-tag.amber { background: var(--amber-light); color: var(--amber); border-color: #FCD34D; }
+  .outcome-tag.blue { background: var(--blue-light); color: var(--blue-dark); border-color: var(--blue-mid); }
+  .outcome-tag.green { background: var(--green-light); color: var(--green); border-color: #86EFAC; }
+
+  /* ── CONTACT STRIP ── */
+  .contact-strip { padding: 52px 0; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+  .contact-strip-inner { display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .contact-strip-title { font-family: 'Instrument Serif', serif; font-size: clamp(18px, 2.2vw, 24px); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .contact-strip-sub { font-size: 14px; color: var(--text-2); max-width: 380px; line-height: 1.6; }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  footer { border-top: 1px solid var(--border); padding: 24px 0; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+  .footer-copy { font-size: 12px; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .snapshot-card { max-width: 440px; }
+    .origin-grid { grid-template-columns: 1fr; gap: 24px; }
+    .origin-main { padding-right: 0; }
+    .origin-card { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 24px; margin-left: 0 !important; }
+    .capabilities-grid { grid-template-columns: 1fr 1fr; }
+    .tech-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .tech-col { border-right: none; margin-right: 0; padding-right: 0; }
+    .demonstrates-grid { grid-template-columns: 1fr 1fr; }
+    .outcome-card { flex-direction: column; }
+    .outcome-tags { padding-left: 0; margin-left: 0; align-self: flex-start; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+  @media (max-width: 600px) {
+    .container, .nav-inner, .footer-inner { padding-left: 18px; padding-right: 18px; }
+    .hero { padding: 48px 0; }
+    .section { padding: 48px 0; }
+    .capabilities-grid { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: 1fr; }
+    .demonstrates-grid { grid-template-columns: 1fr; }
+    .contact-strip-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="document.getElementById('mobileNav').classList.remove('open')">✕</button>
+  <a href="index.html">Home</a>
+  <a href="index.html#projects">Projects</a>
+  <a href="index.html#stack">Stack</a>
+  <a href="index.html#experience">Experience</a>
+  <a href="index.html#contact">Contact</a>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-monogram">RJ</div>
+      <span class="nav-name">Richard Jambor</span>
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#projects" class="active">Projects</a></li>
+        <li><a href="index.html#stack">Stack</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <a href="index.html#projects" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M10 3L5 8l5 5"/></svg>
+        Back to Projects
+      </a>
+    </div>
+    <button class="hamburger" onclick="document.getElementById('mobileNav').classList.add('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow-dot reveal">Project Case Study</div>
+        <h1 class="hero-title reveal rd1">Internal Process<br>Validation Web App</h1>
+        <p class="hero-sub reveal rd2">Google Apps Script web application built to support tracking and validation of carton placement in a production hall.</p>
+        <p class="hero-desc reveal rd2">A lightweight internal tool that helps operators and validation staff perform structured checks, reduce manual errors, and maintain clear visibility of daily validation work at the floor level.</p>
+        <div class="hero-cta reveal rd3">
+          <a href="#process-flow" class="btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Project Overview
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+          <a href="#process-flow" class="btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Process Flow
+          </a>
+          <a href="index.html#projects" class="btn-secondary">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M10 3L5 8l5 5"/></svg>
+            Back to Projects
+          </a>
+        </div>
+        <div class="confidential-bar reveal rd3">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Described at a high level due to company confidentiality.</span>
+        </div>
+      </div>
+
+      <!-- Snapshot card -->
+      <div class="reveal rd2">
+        <div class="snapshot-card">
+          <div class="snapshot-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <span class="snapshot-header-title">Project Snapshot</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span class="snapshot-key">Type</span>
+            <span class="snapshot-val"><span class="badge-amber">Internal Tool</span></span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span class="snapshot-key">Platform</span>
+            <span class="snapshot-val">Web App</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            <span class="snapshot-key">Focus</span>
+            <span class="snapshot-val">Process Tracking &amp; Validation</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span class="snapshot-key">Stack</span>
+            <span class="snapshot-val">Google Apps Script + JavaScript</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="snapshot-key">Environment</span>
+            <span class="snapshot-val">Production / Logistics</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="snapshot-key">Role</span>
+            <span class="snapshot-val">Design, Development, Deployment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ORIGIN / PROBLEM / SOLUTION ── -->
+<section class="section">
+  <div class="container">
+    <div class="origin-grid">
+      <div class="origin-main reveal">
+        <h2>Built for a real operational problem</h2>
+        <p>In a manufacturing environment, carton placement and validation steps must be fast, accurate and traceable. Manual checking creates room for human error, delays, and inconsistent records which makes it harder to maintain quality and meet audit needs.</p>
+      </div>
+      <div class="origin-card reveal rd1">
+        <div class="origin-card-label">
+          <div class="icon-wrap red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          Problem
+        </div>
+        <p>Validation and tracking were performed manually using spreadsheets and paper logs. This was prone to mistakes, harder to audit, and slower for floor-level verification.</p>
+      </div>
+      <div class="origin-card gap reveal rd2">
+        <div class="origin-card-label">
+          <div class="icon-wrap green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          Solution
+        </div>
+        <p>A lightweight internal web application for structured validation checks, quick status updates, and clearer visibility for operators and validation staff.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── KEY CAPABILITIES ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label reveal">Key Capabilities</p>
+    <div class="capabilities-grid">
+      <div class="cap-card reveal">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+        <div class="cap-title">Live Validation Dashboard</div>
+        <p class="cap-desc">Real-time overview of daily validations with counts for today, pending items, and issues requiring attention.</p>
+      </div>
+      <div class="cap-card reveal rd1">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div class="cap-title">Order / Carton Verification</div>
+        <p class="cap-desc">Simple forms for entering order, line and carton details with instant validation and status updates.</p>
+      </div>
+      <div class="cap-card reveal rd2">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div class="cap-title">Issue Visibility</div>
+        <p class="cap-desc">Issues are flagged, tracked and easy to review so problems can be resolved quickly.</p>
+      </div>
+      <div class="cap-card reveal rd3">
+        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="cap-title">Simpler Floor-Level Tracking</div>
+        <p class="cap-desc">A lightweight workflow that helps operators stay aligned and keeps validation records consistent and traceable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TECHNICAL IMPLEMENTATION ── -->
+<section class="section" id="process-flow">
+  <div class="container">
+    <h2 class="reveal" style="font-family:'Instrument Serif',serif;font-size:clamp(22px,2.5vw,30px);letter-spacing:-0.4px;margin-bottom:28px;">Technical Implementation</h2>
+    <div class="tech-grid reveal rd1">
+
+      <div class="tech-col">
+        <div class="tech-col-title">Tech Stack</div>
+        <div class="tech-stack-item">
+          <span class="tech-lang-badge badge-gas">GS</span>
+          Google Apps Script
+        </div>
+        <div class="tech-stack-item">
+          <span class="tech-lang-badge badge-js">JS</span>
+          JavaScript
+        </div>
+        <div class="tech-stack-item">
+          <span class="tech-lang-badge badge-gws">G</span>
+          Google Workspace
+        </div>
+      </div>
+
+      <div class="tech-col">
+        <div class="tech-col-title">App Modules</div>
+        <div class="module-item">Dashboard Overview</div>
+        <div class="module-item">Validation Form</div>
+        <div class="module-item">Validation History</div>
+        <div class="module-item">Issue Review</div>
+      </div>
+
+      <div class="tech-col">
+        <div class="tech-col-title">Delivery / Context</div>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Built and deployed as an internal tool to support production and logistics teams in a real operational environment.</p>
+        <div class="delivery-note">
+          <span>Internal Deployment</span>
+        </div>
+      </div>
+
+      <div class="tech-col">
+        <div class="tech-col-title">Workflow Overview</div>
+        <div class="arch-flow">
+          <div class="arch-node">Order<br>Input</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">Validation<br>Check</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">Status<br>Review</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">Issue<br>Flagging</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">Result<br>Logging</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── WHAT THIS PROJECT DEMONSTRATES ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label reveal">What this project demonstrates</p>
+    <div class="demonstrates-grid" style="margin-top:20px;">
+
+      <div class="demo-card reveal">
+        <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div>
+          <div class="demo-title">Building internal operational tools</div>
+          <p class="demo-desc">Creating practical solutions that improve daily work for operations and support teams.</p>
+        </div>
+      </div>
+
+      <div class="demo-card reveal rd1">
+        <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div>
+          <div class="demo-title">Translating process pain points into software</div>
+          <p class="demo-desc">Turning real problems into simple, reliable workflows that people actually use.</p>
+        </div>
+      </div>
+
+      <div class="demo-card reveal rd2">
+        <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="demo-title">Working within real business constraints</div>
+          <p class="demo-desc">Delivering solutions that respect confidentiality, time, and operational requirements.</p>
+        </div>
+      </div>
+
+      <div class="demo-card reveal rd3">
+        <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div>
+          <div class="demo-title">Designing for non-technical users</div>
+          <p class="demo-desc">Clean, easy to use interfaces that make work faster and reduce training needs.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── OUTCOME ── -->
+<section class="section">
+  <div class="container reveal">
+    <div class="outcome-card">
+      <div class="outcome-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      </div>
+      <div class="outcome-body">
+        <div class="outcome-title">Outcome</div>
+        <p class="outcome-text">The Internal Process Validation Web App improved the structure and speed of validation work on the production floor, reduced manual errors, and provided clearer visibility into daily operations. Another example of building practical internal tools that deliver real impact.</p>
+      </div>
+      <div class="outcome-tags">
+        <span class="outcome-tag amber">Internal Tool</span>
+        <span class="outcome-tag blue">Google Apps Script</span>
+        <span class="outcome-tag green">Process Validation</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT STRIP ── -->
+<div class="contact-strip">
+  <div class="container">
+    <div class="contact-strip-inner">
+      <div>
+        <p class="section-label">Contact</p>
+        <p class="contact-strip-title">Interested in internal tools, automation or practical business software?</p>
+        <p class="contact-strip-sub">I'm open to building useful software that solves real business problems.</p>
+      </div>
+      <div class="contact-links reveal">
+        <a href="https://www.linkedin.com/in/richard-jambor-62b9a3309/" target="_blank" rel="noopener" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19 0H5C2.239 0 0 2.239 0 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5V5c0-2.761-2.238-5-5-5zM8 19H5V8h3v11zM6.5 6.732c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zM20 19h-3v-5.604c0-3.368-4-3.113-4 0V19h-3V8h3v1.765c1.396-2.586 7-2.777 7 2.476V19z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/richardjambor" target="_blank" rel="noopener" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="mailto:richard@example.com" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email
+        </a>
+        <a href="https://apps.apple.com/us/app/budflow/id6757763758" target="_blank" rel="noopener" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          App Store
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2025 Richard Jambor</span>
+    <span class="footer-copy">Internal Process Validation Web App</span>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  setTimeout(() => { document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible')); }, 80);
+</script>
+</body>
+</html>
