@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BudFlow — iOS Finance Tracking App · Richard Jambor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #1A5CFF; --blue-light: #EEF3FF; --blue-mid: #D0DEFF; --blue-dark: #0A2A8A;
+    --green: #16A34A; --green-light: #DCFCE7;
+    --text: #0D0D0D; --text-2: #5A5A5A; --text-3: #9A9A9A;
+    --border: #E4E4E4; --border-strong: #C8C8C8;
+    --surface: #FFFFFF; --surface-2: #F7F7F6; --surface-3: #F0F0EE;
+    --radius: 10px; --radius-lg: 16px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: #FAFAF9; color: var(--text); font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(250,250,249,0.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 52px; max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-monogram { width: 32px; height: 32px; background: var(--text); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: -0.5px; }
+  .nav-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .nav-right { display: flex; align-items: center; gap: 4px; }
+  .nav-links { display: flex; gap: 2px; list-style: none; }
+  .nav-links a { font-size: 13px; font-family: 'IBM Plex Mono', monospace; color: var(--text-2); text-decoration: none; padding: 5px 12px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+  .nav-links a:hover { background: var(--surface-3); color: var(--text); }
+  .nav-links a.active { color: var(--blue); background: var(--blue-light); }
+  .nav-back { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-2); text-decoration: none; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); transition: background 0.15s, border-color 0.15s; margin-left: 8px; white-space: nowrap; }
+  .nav-back:hover { background: var(--surface-3); border-color: var(--border-strong); }
+  .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; }
+  .hamburger span { display: block; width: 20px; height: 1.5px; background: var(--text); margin: 4px 0; }
+  .mobile-nav { display: none; position: fixed; inset: 0; background: rgba(250,250,249,0.97); z-index: 200; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav a { font-family: 'Instrument Serif', serif; font-size: 28px; color: var(--text); text-decoration: none; padding: 10px 24px; transition: color 0.15s; }
+  .mobile-nav a:hover { color: var(--blue); }
+  .mobile-nav-close { position: absolute; top: 16px; right: 24px; background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text); }
+
+  /* SHARED */
+  .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
+  .eyebrow-dot { display: inline-flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin-bottom: 18px; }
+  .eyebrow-dot::before { content: ''; display: block; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+  .btn-primary { background: var(--blue); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: background 0.15s, transform 0.1s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: #0042DD; transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 400; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: background 0.15s, border-color 0.15s; font-family: 'DM Sans', sans-serif; }
+  .btn-secondary:hover { background: var(--surface-3); border-color: #AAAAAA; }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.visible { opacity: 1; transform: none; }
+  .rd1 { transition-delay: 0.07s; } .rd2 { transition-delay: 0.14s; } .rd3 { transition-delay: 0.21s; } .rd4 { transition-delay: 0.28s; }
+  .section { padding: 64px 0; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+  .section-heading { font-family: 'Instrument Serif', serif; font-size: clamp(22px, 2.5vw, 30px); letter-spacing: -0.4px; line-height: 1.2; margin-bottom: 28px; }
+
+  /* HERO */
+  .hero { padding: 68px 0 64px; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 360px; gap: 52px; align-items: start; }
+  .hero-title { font-family: 'Instrument Serif', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 400; line-height: 1.05; letter-spacing: -1.5px; color: var(--text); margin-bottom: 16px; }
+  .hero-sub { font-size: 16px; color: var(--text-2); line-height: 1.6; max-width: 480px; margin-bottom: 10px; font-weight: 500; }
+  .hero-desc { font-size: 15px; color: var(--text-2); line-height: 1.75; max-width: 480px; margin-bottom: 28px; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+  /* SNAPSHOT CARD */
+  .snapshot-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .snapshot-header { padding: 13px 18px; border-bottom: 1px solid var(--border); background: var(--surface-2); display: flex; align-items: center; gap: 8px; }
+  .snapshot-header svg { width: 14px; height: 14px; color: var(--text-3); flex-shrink: 0; }
+  .snapshot-header-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; color: var(--text); }
+  .snapshot-row { display: flex; align-items: center; padding: 10px 18px; border-bottom: 1px solid var(--border); gap: 12px; transition: background 0.1s; }
+  .snapshot-row:last-child { border-bottom: none; }
+  .snapshot-row:hover { background: var(--surface-2); }
+  .snapshot-icon { width: 15px; height: 15px; flex-shrink: 0; color: var(--text-3); }
+  .snapshot-key { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); width: 72px; flex-shrink: 0; }
+  .snapshot-val { font-size: 13px; color: var(--text); }
+  .badge-green { display: inline-block; background: var(--green-light); color: var(--green); font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 4px; }
+  .badge-blue { display: inline-block; background: var(--blue-light); color: var(--blue-dark); font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 4px; }
+
+  /* ORIGIN */
+  .origin-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+  .origin-main { padding-right: 40px; }
+  .origin-main h2 { font-family: 'Instrument Serif', serif; font-size: clamp(20px, 2.2vw, 26px); letter-spacing: -0.4px; line-height: 1.2; margin-bottom: 14px; }
+  .origin-main p { font-size: 14px; color: var(--text-2); line-height: 1.75; }
+  .origin-card { border-left: 1px solid var(--border); padding: 0 0 0 32px; }
+  .origin-card + .origin-card { margin-left: 32px; }
+  .origin-card-label { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+  .icon-wrap { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .icon-wrap.red { background: #FEE2E2; } .icon-wrap.red svg { color: #DC2626; }
+  .icon-wrap.green { background: var(--green-light); } .icon-wrap.green svg { color: var(--green); }
+  .icon-wrap svg { width: 14px; height: 14px; }
+  .origin-card p { font-size: 13.5px; color: var(--text-2); line-height: 1.7; }
+
+  /* PHONE SCREENS */
+  .screens-heading { font-family: 'Instrument Serif', serif; font-size: clamp(22px, 2.5vw, 30px); letter-spacing: -0.4px; margin-bottom: 32px; }
+  .phones-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; align-items: flex-end; }
+  .phone-item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .phone-frame { width: 100%; aspect-ratio: 9/19.5; border-radius: 22px; background: #1C1C1E; border: 2px solid #3A3A3C; overflow: hidden; position: relative; }
+  .phone-notch { position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 44px; height: 7px; background: #1C1C1E; border-radius: 4px; z-index: 2; }
+  .phone-screen { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .phone-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--blue); text-align: center; }
+
+  /* FEATURES */
+  .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s; }
+  .feature-card:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.06); }
+  .feature-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .feature-icon svg { width: 18px; height: 18px; color: var(--blue); }
+  .feature-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 7px; line-height: 1.3; }
+  .feature-desc { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+
+  /* TECH */
+  .tech-grid { display: grid; grid-template-columns: 1fr 1.2fr 0.9fr 1.4fr; gap: 0; }
+  .tech-col { padding-right: 28px; border-right: 1px solid var(--border); margin-right: 28px; }
+  .tech-col:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .tech-col-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .tech-stack-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; color: var(--text-2); }
+  .lang-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-swift { background: #F05138; } .dot-swiftui { background: #0066CC; } .dot-swiftdata { background: #34C759; }
+  .tech-feature-item { display: flex; align-items: flex-start; gap: 7px; padding: 5px 0; font-size: 12.5px; color: var(--text-2); line-height: 1.4; }
+  .tech-feature-item::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; margin-top: 6px; }
+  .delivery-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-2); }
+  .delivery-item:last-child { border-bottom: none; }
+  .delivery-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--surface-2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .delivery-icon svg { width: 13px; height: 13px; color: var(--text-2); }
+  .arch-flow { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .arch-node { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text); text-align: center; line-height: 1.3; }
+  .arch-arrow { font-size: 11px; color: var(--text-3); padding: 0 2px; }
+
+  /* SOLVED / OUTCOME */
+  .solved-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .solved-left h2 { font-family: 'Instrument Serif', serif; font-size: clamp(22px, 2.5vw, 30px); letter-spacing: -0.4px; margin-bottom: 24px; }
+  .solved-items { display: flex; flex-direction: column; gap: 20px; }
+  .solved-item { display: flex; gap: 14px; align-items: flex-start; }
+  .solved-item-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .solved-item-icon svg { width: 16px; height: 16px; color: var(--blue); }
+  .solved-item-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .solved-item-desc { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+  .outcome-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; }
+  .outcome-trophy { width: 40px; height: 40px; border-radius: 10px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .outcome-trophy svg { width: 20px; height: 20px; color: var(--blue); }
+  .outcome-heading { font-family: 'Instrument Serif', serif; font-size: 22px; letter-spacing: -0.3px; margin-bottom: 12px; line-height: 1.2; }
+  .outcome-text { font-size: 14px; color: var(--text-2); line-height: 1.75; margin-bottom: 20px; }
+  .outcome-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .outcome-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-family: 'IBM Plex Mono', monospace; padding: 4px 10px; border-radius: 5px; border: 1px solid var(--border); }
+  .outcome-tag.green { background: var(--green-light); color: var(--green); border-color: #86EFAC; }
+  .outcome-tag.default { background: var(--surface-2); color: var(--text-2); }
+  .outcome-tag svg { width: 11px; height: 11px; }
+
+  /* CONTACT STRIP */
+  .contact-strip { padding: 52px 0; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+  .contact-strip-inner { display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .contact-strip-title { font-family: 'Instrument Serif', serif; font-size: clamp(18px, 2.2vw, 24px); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .contact-strip-sub { font-size: 14px; color: var(--text-2); max-width: 380px; line-height: 1.6; }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  footer { border-top: 1px solid var(--border); padding: 24px 0; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+  .footer-copy { font-size: 12px; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; }
+
+  /* RESPONSIVE */
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .snapshot-card { max-width: 440px; }
+    .origin-grid { grid-template-columns: 1fr; gap: 24px; }
+    .origin-main { padding-right: 0; }
+    .origin-card { border-left: none; border-top: 1px solid var(--border); padding: 24px 0 0; margin-left: 0 !important; }
+    .phones-row { grid-template-columns: repeat(2, 1fr); }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .tech-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .tech-col { border-right: none; margin-right: 0; padding-right: 0; }
+    .solved-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+  @media (max-width: 600px) {
+    .container, .nav-inner, .footer-inner { padding-left: 18px; padding-right: 18px; }
+    .hero { padding: 48px 0; }
+    .section { padding: 48px 0; }
+    .features-grid { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: 1fr; }
+    .contact-strip-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="document.getElementById('mobileNav').classList.remove('open')">✕</button>
+  <a href="index.html">Home</a>
+  <a href="index.html#projects">Projects</a>
+  <a href="index.html#stack">Stack</a>
+  <a href="index.html#experience">Experience</a>
+  <a href="index.html#contact">Contact</a>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-monogram">RJ</div>
+      <span class="nav-name">Richard Jambor</span>
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#projects" class="active">Projects</a></li>
+        <li><a href="index.html#stack">Stack</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <a href="index.html#projects" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M10 3L5 8l5 5"/></svg>
+        Back to Projects
+      </a>
+    </div>
+    <button class="hamburger" onclick="document.getElementById('mobileNav').classList.add('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow-dot reveal">Project Case Study</div>
+        <h1 class="hero-title reveal rd1">BudFlow — iOS<br>Finance Tracking App</h1>
+        <p class="hero-sub reveal rd2">Personal finance tracking app built with Swift and SwiftUI and published on the App Store.</p>
+        <p class="hero-desc reveal rd2">BudFlow helps you track expenses, savings and funds with ease. A clean interface, smart categories and a practical monthly overview keep your finances clear and in control.</p>
+        <div class="hero-cta reveal rd3">
+          <a href="https://apps.apple.com/us/app/budflow/id6757763758" target="_blank" rel="noopener" class="btn-primary">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            View on App Store
+          </a>
+          <a href="https://github.com/richardjambor" target="_blank" rel="noopener" class="btn-secondary">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            Source / GitHub
+          </a>
+          <a href="index.html#projects" class="btn-secondary">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M10 3L5 8l5 5"/></svg>
+            Back to Projects
+          </a>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="snapshot-card">
+          <div class="snapshot-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <span class="snapshot-header-title">Project Snapshot</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span class="snapshot-key">Type</span>
+            <span class="snapshot-val"><span class="badge-blue">Shipped Product</span></span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+            <span class="snapshot-key">Platform</span>
+            <span class="snapshot-val">iOS</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            <span class="snapshot-key">Focus</span>
+            <span class="snapshot-val">Personal Finance Tracking</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span class="snapshot-key">Stack</span>
+            <span class="snapshot-val">SwiftUI + SwiftData</span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span class="snapshot-key">Status</span>
+            <span class="snapshot-val"><span class="badge-green">Published on App Store</span></span>
+          </div>
+          <div class="snapshot-row">
+            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="snapshot-key">Role</span>
+            <span class="snapshot-val">Design, Development, Shipping</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORIGIN / PROBLEM / SOLUTION -->
+<section class="section">
+  <div class="container">
+    <div class="origin-grid">
+      <div class="origin-main reveal">
+        <h2>Built from a practical need</h2>
+        <p>I wanted a simple and clean way to track my personal cash flow. BudFlow was created to make it easy to log transactions, organise them by category and understand monthly spending and savings at a glance.</p>
+      </div>
+      <div class="origin-card reveal rd1">
+        <div class="origin-card-label">
+          <div class="icon-wrap red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          Problem
+        </div>
+        <p>Tracking personal expenses and savings is often complicated by too many apps and cluttered interfaces.</p>
+      </div>
+      <div class="origin-card reveal rd2" style="margin-left:32px;">
+        <div class="origin-card-label">
+          <div class="icon-wrap green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          Solution
+        </div>
+        <p>An intuitive iOS app with categorized entries, monthly summaries and a visual dashboard for quick insights.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT SCREENS -->
+<section class="section">
+  <div class="container">
+    <h2 class="screens-heading reveal">Product Screens</h2>
+    <div class="phones-row">
+      <!-- Dashboard -->
+      <div class="phone-item reveal">
+        <div class="phone-frame" style="background:#111827;">
+          <div class="phone-notch"></div>
+          <!-- Replace the SVG below with: <img src="screenshots/dashboard.png" class="phone-screen" alt="Dashboard"> -->
+          <svg viewBox="0 0 180 390" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <rect width="180" height="390" fill="#111827"/>
+            <text x="14" y="24" font-family="monospace" font-size="8" fill="#6B7280">9:41</text>
+            <text x="14" y="46" font-family="monospace" font-size="9" fill="#9CA3AF">September 2024</text>
+            <rect x="14" y="54" width="152" height="72" rx="10" fill="#1E3A5F"/>
+            <text x="24" y="74" font-family="monospace" font-size="8" fill="#93C5FD">Total Balance</text>
+            <text x="24" y="96" font-family="monospace" font-size="17" fill="white" font-weight="700">24 530 €</text>
+            <text x="14" y="144" font-family="monospace" font-size="9" fill="white" font-weight="600">Overview</text>
+            <rect x="14" y="152" width="152" height="14" rx="4" fill="#1F2937"/>
+            <text x="20" y="163" font-family="monospace" font-size="8" fill="#9CA3AF">Income</text><text x="120" y="163" font-family="monospace" font-size="8" fill="#4ADE80">3 910 €</text>
+            <rect x="14" y="170" width="152" height="14" rx="4" fill="#1F2937"/>
+            <text x="20" y="181" font-family="monospace" font-size="8" fill="#9CA3AF">Expenses</text><text x="112" y="181" font-family="monospace" font-size="8" fill="#F87171">-1 420 €</text>
+            <rect x="14" y="188" width="152" height="14" rx="4" fill="#1F2937"/>
+            <text x="20" y="199" font-family="monospace" font-size="8" fill="#9CA3AF">Savings</text><text x="112" y="199" font-family="monospace" font-size="8" fill="#60A5FA">-1 250 €</text>
+            <rect x="14" y="206" width="152" height="14" rx="4" fill="#1F2937"/>
+            <text x="20" y="217" font-family="monospace" font-size="8" fill="#9CA3AF">Funds</text><text x="120" y="217" font-family="monospace" font-size="8" fill="#FBBF24">-640 €</text>
+            <text x="14" y="240" font-family="monospace" font-size="9" fill="white" font-weight="600">Recent Transactions</text>
+            <rect x="14" y="248" width="152" height="22" rx="5" fill="#1F2937"/>
+            <circle cx="26" cy="259" r="5" fill="#4ADE80"/>
+            <text x="36" y="263" font-family="monospace" font-size="8" fill="#D1D5DB">Salary</text><text x="118" y="263" font-family="monospace" font-size="8" fill="#4ADE80">2 500 €</text>
+            <rect x="0" y="362" width="180" height="28" fill="#1F2937"/>
+            <text x="22" y="381" font-family="monospace" font-size="13" fill="#3B82F6">⊞</text>
+            <text x="60" y="381" font-family="monospace" font-size="13" fill="#6B7280">◯</text>
+            <text x="96" y="381" font-family="monospace" font-size="13" fill="#6B7280">＋</text>
+            <text x="132" y="381" font-family="monospace" font-size="13" fill="#6B7280">☰</text>
+          </svg>
+        </div>
+        <span class="phone-label">Dashboard</span>
+      </div>
+      <!-- Monthly Overview -->
+      <div class="phone-item reveal rd1">
+        <div class="phone-frame" style="background:#0f1b2d;">
+          <div class="phone-notch"></div>
+          <svg viewBox="0 0 180 390" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <rect width="180" height="390" fill="#0f1b2d"/>
+            <text x="14" y="24" font-family="monospace" font-size="8" fill="#6B7280">9:41</text>
+            <text x="14" y="46" font-family="monospace" font-size="9" fill="#9CA3AF">September 2024</text>
+            <text x="14" y="70" font-family="monospace" font-size="17" fill="white" font-weight="700">1 420 €</text>
+            <text x="14" y="86" font-family="monospace" font-size="8" fill="#9CA3AF">Total Expenses</text>
+            <circle cx="90" cy="168" r="52" fill="none" stroke="#1E3A5F" stroke-width="18"/>
+            <circle cx="90" cy="168" r="52" fill="none" stroke="#F87171" stroke-width="18" stroke-dasharray="98 228" stroke-dashoffset="65" stroke-linecap="round"/>
+            <circle cx="90" cy="168" r="52" fill="none" stroke="#FBBF24" stroke-width="18" stroke-dasharray="60 266" stroke-dashoffset="-33" stroke-linecap="round"/>
+            <circle cx="90" cy="168" r="52" fill="none" stroke="#A78BFA" stroke-width="18" stroke-dasharray="80 246" stroke-dashoffset="-93" stroke-linecap="round"/>
+            <text x="14" y="246" font-family="monospace" font-size="8" fill="#9CA3AF">Expenses by Category</text>
+            <circle cx="20" cy="262" r="4" fill="#F87171"/><text x="30" y="266" font-family="monospace" font-size="8" fill="#D1D5DB">Food</text><text x="128" y="266" font-family="monospace" font-size="8" fill="#F87171">-430 €</text>
+            <circle cx="20" cy="280" r="4" fill="#FBBF24"/><text x="30" y="284" font-family="monospace" font-size="8" fill="#D1D5DB">Transport</text><text x="128" y="284" font-family="monospace" font-size="8" fill="#FBBF24">-210 €</text>
+            <circle cx="20" cy="298" r="4" fill="#A78BFA"/><text x="30" y="302" font-family="monospace" font-size="8" fill="#D1D5DB">Shopping</text><text x="128" y="302" font-family="monospace" font-size="8" fill="#A78BFA">-340 €</text>
+            <circle cx="20" cy="316" r="4" fill="#34D399"/><text x="30" y="320" font-family="monospace" font-size="8" fill="#D1D5DB">Bills</text><text x="128" y="320" font-family="monospace" font-size="8" fill="#34D399">-250 €</text>
+            <circle cx="20" cy="334" r="4" fill="#60A5FA"/><text x="30" y="338" font-family="monospace" font-size="8" fill="#D1D5DB">Other</text><text x="128" y="338" font-family="monospace" font-size="8" fill="#60A5FA">-305 €</text>
+          </svg>
+        </div>
+        <span class="phone-label">Monthly Overview</span>
+      </div>
+      <!-- Add Entry -->
+      <div class="phone-item reveal rd2">
+        <div class="phone-frame" style="background:#111827;">
+          <div class="phone-notch"></div>
+          <svg viewBox="0 0 180 390" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <rect width="180" height="390" fill="#111827"/>
+            <text x="14" y="46" font-family="monospace" font-size="9" fill="#3B82F6">Cancel</text>
+            <text x="54" y="46" font-family="monospace" font-size="9" fill="white" font-weight="600">Add Transaction</text>
+            <text x="152" y="46" text-anchor="end" font-family="monospace" font-size="9" fill="#3B82F6">Save</text>
+            <rect x="14" y="56" width="152" height="26" rx="8" fill="#1F2937"/>
+            <rect x="16" y="58" width="74" height="22" rx="7" fill="#3B82F6"/>
+            <text x="53" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="white">Expense</text>
+            <text x="127" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#6B7280">Income</text>
+            <text x="14" y="106" font-family="monospace" font-size="8" fill="#9CA3AF">Amount</text>
+            <rect x="14" y="112" width="152" height="32" rx="7" fill="#1F2937"/>
+            <text x="24" y="133" font-family="monospace" font-size="14" fill="white" font-weight="600">230 €</text>
+            <text x="14" y="162" font-family="monospace" font-size="8" fill="#9CA3AF">Category</text>
+            <rect x="14" y="168" width="152" height="32" rx="7" fill="#1F2937"/>
+            <circle cx="28" cy="184" r="7" fill="#F87171"/>
+            <text x="42" y="188" font-family="monospace" font-size="9" fill="white">Food</text>
+            <text x="158" y="188" text-anchor="end" font-family="monospace" font-size="12" fill="#6B7280">›</text>
+            <text x="14" y="218" font-family="monospace" font-size="8" fill="#9CA3AF">Date</text>
+            <rect x="14" y="224" width="152" height="32" rx="7" fill="#1F2937"/>
+            <text x="24" y="244" font-family="monospace" font-size="9" fill="white">20 September 2024</text>
+            <text x="14" y="274" font-family="monospace" font-size="8" fill="#9CA3AF">Note</text>
+            <rect x="14" y="280" width="152" height="32" rx="7" fill="#1F2937"/>
+            <text x="24" y="300" font-family="monospace" font-size="9" fill="#6B7280">Lunch with client</text>
+          </svg>
+        </div>
+        <span class="phone-label">Add Entry</span>
+      </div>
+      <!-- Categories -->
+      <div class="phone-item reveal rd3">
+        <div class="phone-frame" style="background:#0f1b2d;">
+          <div class="phone-notch"></div>
+          <svg viewBox="0 0 180 390" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <rect width="180" height="390" fill="#0f1b2d"/>
+            <text x="90" y="46" text-anchor="middle" font-family="monospace" font-size="10" fill="white" font-weight="600">Categories</text>
+            <text x="158" y="46" font-family="monospace" font-size="9" fill="#3B82F6">Edit</text>
+            <text x="14" y="70" font-family="monospace" font-size="8" fill="#9CA3AF">EXPENSES</text>
+            <rect x="14" y="76" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="87" r="6" fill="#F87171"/><text x="38" y="91" font-family="monospace" font-size="9" fill="#D1D5DB">Food</text>
+            <rect x="14" y="102" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="113" r="6" fill="#FBBF24"/><text x="38" y="117" font-family="monospace" font-size="9" fill="#D1D5DB">Transport</text>
+            <rect x="14" y="128" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="139" r="6" fill="#A78BFA"/><text x="38" y="143" font-family="monospace" font-size="9" fill="#D1D5DB">Shopping</text>
+            <rect x="14" y="154" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="165" r="6" fill="#34D399"/><text x="38" y="169" font-family="monospace" font-size="9" fill="#D1D5DB">Bills</text>
+            <rect x="14" y="180" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="191" r="6" fill="#F97316"/><text x="38" y="195" font-family="monospace" font-size="9" fill="#D1D5DB">Health</text>
+            <rect x="14" y="206" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="217" r="6" fill="#6B7280"/><text x="38" y="221" font-family="monospace" font-size="9" fill="#D1D5DB">Other</text>
+            <text x="14" y="248" font-family="monospace" font-size="8" fill="#9CA3AF">INCOME</text>
+            <rect x="14" y="254" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="265" r="6" fill="#4ADE80"/><text x="38" y="269" font-family="monospace" font-size="9" fill="#D1D5DB">Salary</text>
+            <rect x="14" y="280" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="291" r="6" fill="#60A5FA"/><text x="38" y="295" font-family="monospace" font-size="9" fill="#D1D5DB">Freelance</text>
+            <rect x="14" y="306" width="152" height="22" rx="5" fill="#1F2937"/><circle cx="26" cy="317" r="6" fill="#FBBF24"/><text x="38" y="321" font-family="monospace" font-size="9" fill="#D1D5DB">Investments</text>
+          </svg>
+        </div>
+        <span class="phone-label">Categories</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEY FEATURES -->
+<section class="section">
+  <div class="container">
+    <p class="section-label reveal">Key Features</p>
+    <div class="features-grid" style="margin-top:20px;">
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <div class="feature-title">Monthly Overview</div>
+        <p class="feature-desc">Clear monthly summary of income, expenses, savings and remaining funds.</p>
+      </div>
+      <div class="feature-card reveal rd1">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="feature-title">Expense / Savings / Funds Tracking</div>
+        <p class="feature-desc">Track different types of transactions with ease and full history.</p>
+      </div>
+      <div class="feature-card reveal rd2">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+        <div class="feature-title">Category Management</div>
+        <p class="feature-desc">Create and manage custom categories to keep your finances organised.</p>
+      </div>
+      <div class="feature-card reveal rd3">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="feature-title">Clean Dashboard Visualization</div>
+        <p class="feature-desc">Charts and summaries help you understand your cash flow at a glance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNICAL IMPLEMENTATION -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-heading reveal">Technical Implementation</h2>
+    <div class="tech-grid reveal rd1">
+      <div class="tech-col">
+        <div class="tech-col-title">Tech Stack (Core)</div>
+        <div class="tech-stack-item"><span class="lang-dot dot-swift"></span> Swift</div>
+        <div class="tech-stack-item"><span class="lang-dot dot-swiftui"></span> SwiftUI</div>
+        <div class="tech-stack-item"><span class="lang-dot dot-swiftdata"></span> SwiftData</div>
+      </div>
+      <div class="tech-col">
+        <div class="tech-col-title">App Features</div>
+        <div class="tech-feature-item">Local persistence with SwiftData</div>
+        <div class="tech-feature-item">Category system and reusable models</div>
+        <div class="tech-feature-item">Monthly grouping and aggregation</div>
+        <div class="tech-feature-item">Notifications-ready settings</div>
+      </div>
+      <div class="tech-col">
+        <div class="tech-col-title">Delivery</div>
+        <div class="delivery-item">
+          <div class="delivery-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></div>
+          App Store Connect
+        </div>
+        <div class="delivery-item">
+          <div class="delivery-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg></div>
+          iOS Deployment
+        </div>
+      </div>
+      <div class="tech-col">
+        <div class="tech-col-title">Architecture Overview</div>
+        <div class="arch-flow">
+          <div class="arch-node">Input<br>(Add / Edit)</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">Data Model<br>(SwiftData)</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">Monthly<br>Grouping</div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">Dashboard /<br>History /<br>Settings</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT I SOLVED + OUTCOME -->
+<section class="section">
+  <div class="container">
+    <div class="solved-grid">
+      <div class="solved-left reveal">
+        <h2>What I solved during development</h2>
+        <div class="solved-items">
+          <div class="solved-item">
+            <div class="solved-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+            <div>
+              <div class="solved-item-title">Data modeling with SwiftData</div>
+              <p class="solved-item-desc">Designed a flexible data model for transactions, categories and monthly aggregation.</p>
+            </div>
+          </div>
+          <div class="solved-item">
+            <div class="solved-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div>
+              <div class="solved-item-title">Expense / Savings and Funds tracking</div>
+              <p class="solved-item-desc">Built a generic category system used across all transaction types for consistency.</p>
+            </div>
+          </div>
+          <div class="solved-item">
+            <div class="solved-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+            <div>
+              <div class="solved-item-title">Preparing and shipping the app to the App Store</div>
+              <p class="solved-item-desc">Handled App Store assets, review process and successful publication as an indie developer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal rd1">
+        <div class="outcome-card">
+          <div class="outcome-trophy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+          <div class="outcome-heading">Outcome</div>
+          <p class="outcome-text">BudFlow was successfully published on the App Store and is available for users downloading. It represents a complete end-to-end iOS product I designed, built and shipped independently.</p>
+          <div class="outcome-tags">
+            <span class="outcome-tag green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Shipped Product
+            </span>
+            <span class="outcome-tag default">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              SwiftUI
+            </span>
+            <span class="outcome-tag default">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              App Store
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT STRIP -->
+<div class="contact-strip">
+  <div class="container">
+    <div class="contact-strip-inner">
+      <div>
+        <p class="section-label">Contact</p>
+        <p class="contact-strip-title">Interested in practical iOS products or internal tools?</p>
+        <p class="contact-strip-sub">I'm open to building useful software that solves real business problems.</p>
+      </div>
+      <div class="contact-links reveal">
+        <a href="https://www.linkedin.com/in/richard-jambor-62b9a3309/" target="_blank" rel="noopener" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19 0H5C2.239 0 0 2.239 0 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5V5c0-2.761-2.238-5-5-5zM8 19H5V8h3v11zM6.5 6.732c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zM20 19h-3v-5.604c0-3.368-4-3.113-4 0V19h-3V8h3v1.765c1.396-2.586 7-2.777 7 2.476V19z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/richardjambor" target="_blank" rel="noopener" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="mailto:richard@example.com" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email
+        </a>
+        <a href="https://apps.apple.com/us/app/budflow/id6757763758" target="_blank" rel="noopener" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          App Store
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2025 Richard Jambor</span>
+    <span class="footer-copy">BudFlow — iOS Finance Tracking App</span>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  setTimeout(() => { document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible')); }, 80);
+</script>
+</body>
+</html>
