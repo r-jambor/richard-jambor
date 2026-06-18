@@ -121,6 +121,7 @@
   .badge-gas { background: #4285F4; }
   .badge-js { background: #F7DF1E; color: #000; }
   .badge-gws { background: #34A853; }
+  .badge-5 { background: #ef810b; }
   .module-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; color: var(--text-2); }
   .module-item::before { content: ''; display: block; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
   .delivery-note { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 12px; }
@@ -302,14 +303,15 @@
     <div class="origin-grid">
       <div class="origin-main reveal">
         <h2>Built for a real operational problem</h2>
-        <p>In a manufacturing environment, carton placement and validation steps must be fast, accurate and traceable. Manual checking creates room for human error, delays, and inconsistent records which makes it harder to maintain quality and meet audit needs.</p>
+        <p>A manufacturing team needed a simple way to record and monitor a validation process that was previously not tracked digitally.
+Instead of implementing the initially proposed form-based solution, I designed a dedicated web application that better matched the workflow and day-to-day usage.</p>
       </div>
       <div class="origin-card reveal rd1">
         <div class="origin-card-label">
           <div class="icon-wrap red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
           Problem
         </div>
-        <p>Validation and tracking were performed manually using spreadsheets and paper logs. This was prone to mistakes, harder to audit, and slower for floor-level verification.</p>
+        <p>The process had no dedicated tracking system. Information was recorded through a long and complicated process, making it difficult to maintain consistency, monitor progress and review completed work.</p>
       </div>
       <div class="origin-card gap reveal rd2">
         <div class="origin-card-label">
@@ -330,22 +332,18 @@
       <div class="cap-card reveal">
         <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
         <div class="cap-title">Live Validation Dashboard</div>
-        <p class="cap-desc">Real-time overview of daily validations with counts for today, pending items, and issues requiring attention.</p>
+        <p class="cap-desc">Real-time overview of ongoing validation activities, pending items and issues requiring attention.</p>
       </div>
       <div class="cap-card reveal rd1">
         <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-        <div class="cap-title">Order / Carton Verification</div>
-        <p class="cap-desc">Simple forms for entering order, line and carton details with instant validation and status updates.</p>
+        <div class="cap-title">Process Validation</div>
+        <p class="cap-desc">Guided validation workflow with structured data entry and immediate status feedback.</p>
       </div>
-      <div class="cap-card reveal rd2">
-        <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-        <div class="cap-title">Issue Visibility</div>
-        <p class="cap-desc">Issues are flagged, tracked and easy to review so problems can be resolved quickly.</p>
-      </div>
+      
       <div class="cap-card reveal rd3">
         <div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div class="cap-title">Simpler Floor-Level Tracking</div>
-        <p class="cap-desc">A lightweight workflow that helps operators stay aligned and keeps validation records consistent and traceable.</p>
+        <div class="cap-title">Process Tracking</div>
+        <p class="cap-desc">Lightweight tracking that improves consistency, visibility and traceability across the validation process.</p>
       </div>
     </div>
   </div>
@@ -354,7 +352,7 @@
 <!-- ── TECHNICAL IMPLEMENTATION ── -->
 <section class="section" id="process-flow">
   <div class="container">
-    <h2 class="reveal" style="font-family:'Instrument Serif',serif;font-size:clamp(22px,2.5vw,30px);letter-spacing:-0.4px;margin-bottom:28px;">Technical Implementation</h2>
+    <h2 class="reveal" style="font-family:'Instrument Serif',serif;font-size:clamp(22px,2.5vw,30px);letter-spacing:-0.4px;margin-bottom:28px;">Implementation Overview</h2>
     <div class="tech-grid reveal rd1">
 
       <div class="tech-col">
@@ -369,7 +367,11 @@
         </div>
         <div class="tech-stack-item">
           <span class="tech-lang-badge badge-gws">G</span>
-          Google Workspace
+          Google Sheets
+        </div>
+        <div class="tech-stack-item">
+          <span class="tech-lang-badge badge-5">5</span>
+          HTML / CSS
         </div>
       </div>
 
@@ -377,78 +379,30 @@
         <div class="tech-col-title">App Modules</div>
         <div class="module-item">Dashboard Overview</div>
         <div class="module-item">Validation Form</div>
-        <div class="module-item">Validation History</div>
-        <div class="module-item">Issue Review</div>
+        <div class="module-item">QR code real-time data checker</div>
+        <div class="module-item">E-mail notifications</div>
       </div>
 
       <div class="tech-col">
         <div class="tech-col-title">Delivery / Context</div>
-        <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Built and deployed as an internal tool to support production and logistics teams in a real operational environment.</p>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Designed, developed and deployed as an internal tool supporting a real operational workflow.</p>
         <div class="delivery-note">
           <span>Internal Deployment</span>
         </div>
       </div>
-
       <div class="tech-col">
-        <div class="tech-col-title">Workflow Overview</div>
-        <div class="arch-flow">
-          <div class="arch-node">Order<br>Input</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Validation<br>Check</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Status<br>Review</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Issue<br>Flagging</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Result<br>Logging</div>
-        </div>
+        <div class="tech-col-title">AI-assisted development</div>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Built with the help of AI-assisted development tools while remaining fully responsible for solution design, implementation, testing and deployment.</p>
+        
       </div>
+
+      
 
     </div>
   </div>
 </section>
 
-<!-- ── WHAT THIS PROJECT DEMONSTRATES ── -->
-<section class="section">
-  <div class="container">
-    <p class="section-label reveal">What this project demonstrates</p>
-    <div class="demonstrates-grid" style="margin-top:20px;">
 
-      <div class="demo-card reveal">
-        <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <div>
-          <div class="demo-title">Building internal operational tools</div>
-          <p class="demo-desc">Creating practical solutions that improve daily work for operations and support teams.</p>
-        </div>
-      </div>
-
-      <div class="demo-card reveal rd1">
-        <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <div>
-          <div class="demo-title">Translating process pain points into software</div>
-          <p class="demo-desc">Turning real problems into simple, reliable workflows that people actually use.</p>
-        </div>
-      </div>
-
-      <div class="demo-card reveal rd2">
-        <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        <div>
-          <div class="demo-title">Working within real business constraints</div>
-          <p class="demo-desc">Delivering solutions that respect confidentiality, time, and operational requirements.</p>
-        </div>
-      </div>
-
-      <div class="demo-card reveal rd3">
-        <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div>
-          <div class="demo-title">Designing for non-technical users</div>
-          <p class="demo-desc">Clean, easy to use interfaces that make work faster and reduce training needs.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 <!-- ── OUTCOME ── -->
 <section class="section">
@@ -459,12 +413,12 @@
       </div>
       <div class="outcome-body">
         <div class="outcome-title">Outcome</div>
-        <p class="outcome-text">The Internal Process Validation Web App improved the structure and speed of validation work on the production floor, reduced manual errors, and provided clearer visibility into daily operations. Another example of building practical internal tools that deliver real impact.</p>
+        <p class="outcome-text">This project transformed a manual process into a structured internal workflow, giving users a simpler and more consistent way to perform daily validation tasks. More importantly, it was my first opportunity to take a real business requirement, propose an alternative solution, build it from scratch and deploy it into daily use.</p>
       </div>
       <div class="outcome-tags">
         <span class="outcome-tag amber">Internal Tool</span>
-        <span class="outcome-tag blue">Google Apps Script</span>
-        <span class="outcome-tag green">Process Validation</span>
+        <span class="outcome-tag blue">End-to-end development</span>
+        <span class="outcome-tag green">AI-assisted development</span>
       </div>
     </div>
   </div>
@@ -477,25 +431,19 @@
       <div>
         <p class="section-label">Contact</p>
         <p class="contact-strip-title">Interested in internal tools, automation or practical business software?</p>
-        <p class="contact-strip-sub">I'm open to building useful software that solves real business problems.</p>
+        <p class="contact-strip-sub">I'm open to building software.</p>
       </div>
       <div class="contact-links reveal">
         <a href="https://www.linkedin.com/in/richard-jambor-62b9a3309/" target="_blank" rel="noopener" class="btn-primary">
           <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19 0H5C2.239 0 0 2.239 0 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5V5c0-2.761-2.238-5-5-5zM8 19H5V8h3v11zM6.5 6.732c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zM20 19h-3v-5.604c0-3.368-4-3.113-4 0V19h-3V8h3v1.765c1.396-2.586 7-2.777 7 2.476V19z"/></svg>
           LinkedIn
         </a>
-        <a href="https://github.com/richardjambor" target="_blank" rel="noopener" class="btn-secondary">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-          GitHub
-        </a>
-        <a href="mailto:richard@example.com" class="btn-secondary">
+        
+        <a href="mailto:jamby.risa@gmail.com" class="btn-secondary">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Email
         </a>
-        <a href="https://apps.apple.com/us/app/budflow/id6757763758" target="_blank" rel="noopener" class="btn-secondary">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-          App Store
-        </a>
+        
       </div>
     </div>
   </div>
@@ -503,7 +451,7 @@
 
 <footer>
   <div class="footer-inner">
-    <span class="footer-copy">© 2025 Richard Jambor</span>
+    <span class="footer-copy">© 2026 Richard Jambor</span>
     <span class="footer-copy">Internal Process Validation Web App</span>
   </div>
 </footer>
