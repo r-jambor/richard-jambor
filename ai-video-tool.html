@@ -104,21 +104,103 @@
   .icon-wrap svg { width: 14px; height: 14px; }
   .origin-card p { font-size: 13.5px; color: var(--text-2); line-height: 1.7; }
 
-  /* ── WORKFLOW PIPELINE ── */
-  .pipeline-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-top: 28px; }
-  .pipeline-steps-bar { display: grid; grid-template-columns: repeat(6, 1fr); border-bottom: 1px solid var(--border); }
-  .pipeline-step { padding: 14px 12px; display: flex; align-items: center; justify-content: center; gap: 7px; border-right: 1px solid var(--border); cursor: default; position: relative; }
-  .pipeline-step:last-child { border-right: none; }
-  .pipeline-step.active { background: var(--blue-light); }
-  .pipeline-step.active .ps-label { color: var(--blue); }
-  .pipeline-step.active .ps-icon { color: var(--blue); }
-  .ps-icon { color: var(--text-3); flex-shrink: 0; }
-  .ps-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text-2); }
-  .ps-arrow { position: absolute; right: -7px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; font-size: 8px; color: var(--text-3); }
-  .pipeline-sub-row { display: grid; grid-template-columns: repeat(6, 1fr); border-bottom: 1px solid var(--border); }
-  .pipeline-sub { padding: 7px 12px; border-right: 1px solid var(--border); text-align: center; }
-  .pipeline-sub:last-child { border-right: none; }
-  .pipeline-sub span { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-3); }
+  /* ── WORKFLOW PIPELINE (branching) ── */
+  .pipeline-wrap { margin-top: 28px; }
+ 
+  /* SVG diagram container */
+  .pipeline-diagram-svg { width: 100%; overflow: visible; display: block; }
+ 
+  /* Clickable nodes */
+  .pipe-node { cursor: pointer; }
+  .pipe-node rect, .pipe-node .node-bg {
+    fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5;
+    transition: fill 0.18s, stroke 0.18s;
+    rx: 8; ry: 8;
+  }
+  .pipe-node:hover rect, .pipe-node:hover .node-bg { fill: var(--blue-light); stroke: var(--blue); }
+  .pipe-node.active rect, .pipe-node.active .node-bg { fill: var(--blue-light); stroke: var(--blue); stroke-width: 2; }
+  .pipe-node text { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; fill: var(--text-2); transition: fill 0.18s; pointer-events: none; }
+  .pipe-node:hover text, .pipe-node.active text { fill: var(--blue); }
+  .pipe-node .node-sub { font-size: 10px; font-weight: 400; fill: var(--text-3); font-family: 'IBM Plex Mono', monospace; }
+  .pipe-node:hover .node-sub, .pipe-node.active .node-sub { fill: var(--blue-dark); }
+ 
+  /* Special: human validation node */
+  .pipe-node.special rect, .pipe-node.special .node-bg { stroke: #D97706; }
+  .pipe-node.special:hover rect, .pipe-node.special.active rect { fill: #FEF3C7; stroke: #D97706; }
+  .pipe-node.special:hover text, .pipe-node.special.active text { fill: #92400E; }
+  .pipe-node.special:hover .node-sub, .pipe-node.special.active .node-sub { fill: #92400E; }
+ 
+  /* Arrows */
+  .pipe-arrow { stroke: var(--border-strong); stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+  .pipe-arrow-split { stroke: var(--border-strong); stroke-width: 1.5; fill: none; stroke-dasharray: 4 3; marker-end: url(#arrowhead); }
+ 
+  /* Detail panel */
+  .pipeline-detail {
+    margin-top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s ease, margin-top 0.25s ease;
+    pointer-events: none;
+  }
+  .pipeline-detail.open {
+    max-height: 600px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .pd-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 22px; border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .pd-title {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500;
+    color: var(--text); display: flex; align-items: center; gap: 8px;
+  }
+  .pd-badge {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500;
+    padding: 2px 8px; border-radius: 4px;
+    background: var(--blue-light); color: var(--blue-dark);
+  }
+  .pd-badge.amber { background: var(--amber-light); color: var(--amber); }
+  .pd-close {
+    background: none; border: none; cursor: pointer; color: var(--text-3);
+    font-size: 16px; line-height: 1; padding: 2px 6px; border-radius: 4px;
+    transition: background 0.15s; font-family: sans-serif;
+  }
+  .pd-close:hover { background: var(--surface-3); color: var(--text); }
+  .pd-body { padding: 20px 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .pd-desc { font-size: 14px; color: var(--text-2); line-height: 1.75; grid-column: span 2; }
+  .pd-section-title {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .pd-bullets { display: flex; flex-direction: column; gap: 6px; }
+  .pd-bullet {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; color: var(--text-2); line-height: 1.55;
+  }
+  .pd-bullet::before {
+    content: ''; display: block; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--blue); flex-shrink: 0; margin-top: 6px;
+  }
+  .pd-bullet.amber::before { background: #D97706; }
+  .pd-tech-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pd-chip {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-2);
+    background: var(--surface-2); border: 1px solid var(--border);
+    padding: 3px 9px; border-radius: 4px;
+  }
+  .pd-chip.highlight { background: var(--blue-light); color: var(--blue-dark); border-color: var(--blue-mid); }
+  .pd-chip.amber { background: var(--amber-light); color: var(--amber); border-color: #FCD34D; }
+  @media (max-width: 700px) {
+    .pd-body { grid-template-columns: 1fr; }
+    .pd-desc { grid-column: span 1; }
+  }
 
   /* ── KEY CAPABILITIES ── */
   .capabilities-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; }
@@ -249,9 +331,9 @@
     <div class="hero-grid">
       <div>
         <div class="eyebrow-dot reveal">Project Case Study</div>
-        <h1 class="hero-title reveal rd1">AI Video Generation<br>Workflow Tool</h1>
-        <p class="hero-sub reveal rd2">AI-powered workflow tool for automated video generation. Chains local and cloud AI models to go from a text prompt all the way to a finished video — without manual intervention at each step.</p>
-        <p class="hero-desc reveal rd2">A practical automation lab focused on orchestration: turning prompts into scripts, voice, visuals and assembled video output through a structured multi-step pipeline.</p>
+        <h1 class="hero-title reveal rd1">AI Content Orchestrator</h1>
+        <p class="hero-sub reveal rd2">An orchestration system that coordinates local and cloud AI models to transform a single prompt into a fully assembled short-form video.</p>
+        <p class="hero-desc reveal rd2">I started this project as a way to explore how far AI automation could go. It gradually became less about generating videos and more about designing systems that coordinate multiple AI models into one reliable workflow.</p>
         <div class="hero-cta reveal rd3">
           <a href="#workflow" class="btn-primary">
             Workflow Overview
@@ -286,38 +368,36 @@
           </div>
           <div class="snapshot-row">
             <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            <span class="snapshot-key">Platform</span>
-            <span class="snapshot-val">Workflow Tool</span>
+            <span class="snapshot-key">Architecture</span>
+            <span class="snapshot-val">Modular Pipeline</span>
           </div>
           <div class="snapshot-row">
             <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
             <span class="snapshot-key">Focus</span>
-            <span class="snapshot-val">Prompt-to-Video Automation</span>
+            <span class="snapshot-val">Workflow Orchestration</span>
           </div>
           <div class="snapshot-row">
             <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
             <span class="snapshot-key">Stack</span>
             <span class="snapshot-val">
               <div class="stack-multi">
-                <span class="badge-blue">Python + AI APIs</span>
-                <span class="badge-violet">Local AI Models</span>
+                <span class="badge-blue">Python</span>
+                <span class="badge-blue">FastAPI</span>
+                <span class="badge-blue">Gemini</span>
+                <span class="badge-blue">FLUX</span>
+                <span class="badge-blue">LTX-Video</span>
               </div>
             </span>
           </div>
           <div class="snapshot-row">
-            <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-            <span class="snapshot-key">Media</span>
-            <span class="snapshot-val">FFmpeg + Automation</span>
-          </div>
-          <div class="snapshot-row">
             <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span class="snapshot-key">Status</span>
-            <span class="snapshot-val"><span class="badge-green-sm">Experimental / In Progress</span></span>
+            <span class="snapshot-val"><span class="badge-green-sm">Active Development</span></span>
           </div>
           <div class="snapshot-row">
             <svg class="snapshot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span class="snapshot-key">Role</span>
-            <span class="snapshot-val">Design, Automation, Integration</span>
+            <span class="snapshot-val">System Design, Automation, AI Integration, Architecture</span>
           </div>
         </div>
       </div>
@@ -331,71 +411,127 @@
     <div class="origin-grid">
       <div class="origin-main reveal">
         <h2>Built to automate a fragmented process</h2>
-        <p>Creating AI video content usually means manually moving between tools for writing, voice generation, visuals and final assembly. This project explores how a single workflow can coordinate those steps into a practical, repeatable system.</p>
+        <p>Modern AI video creation typically requires switching between multiple disconnected systems — script generation, text-to-speech, image/video models, and manual timeline assembly in a video editor. This project was built to explore whether these steps can be unified into a single automated execution pipeline.</p>
       </div>
       <div class="origin-card reveal rd1">
         <div class="origin-card-label">
           <div class="icon-wrap red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
           Problem
         </div>
-        <p>Prompt-based video generation often requires too many disconnected steps, tools and handoffs.</p>
+        <p>AI content generation is fragmented across multiple independent tools and manual steps.</p>
       </div>
       <div class="origin-card gap reveal rd2">
         <div class="origin-card-label">
           <div class="icon-wrap green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
           Solution
         </div>
-        <p>A modular workflow that chains script generation, voice synthesis, visuals and video assembly into one guided pipeline.</p>
+        <p>A modular orchestration pipeline that coordinates scripting, voice generation, media creation and final assembly into one repeatable process.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── WORKFLOW OVERVIEW ── -->
+  <!-- ── WORKFLOW OVERVIEW ── -->
 <section class="section" id="workflow">
   <div class="container">
     <h2 class="section-heading reveal">Workflow Overview</h2>
-
-    <!-- Animated pipeline -->
-    <div class="pipeline-section reveal rd1">
-      <div class="pipeline-steps-bar">
-        <div class="pipeline-step active">
-          <svg class="ps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <span class="ps-label">Prompt</span>
+ 
+    <div class="pipeline-wrap reveal rd1">
+ 
+      <!-- SVG branching diagram -->
+      <svg class="pipeline-diagram-svg" viewBox="0 0 980 220" xmlns="http://www.w3.org/2000/svg" id="pipelineSvg">
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+            <polygon points="0 0, 8 3.5, 0 7" fill="#C8C8C8"/>
+          </marker>
+          <marker id="arrowhead-active" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+            <polygon points="0 0, 8 3.5, 0 7" fill="#1A5CFF"/>
+          </marker>
+        </defs>
+ 
+        <!-- ── ARROWS ── -->
+        <!-- Prompt → Script -->
+        <line x1="140" y1="110" x2="198" y2="110" class="pipe-arrow"/>
+        <!-- Script → Voice (up-left branch) -->
+        <path d="M 310 95 L 310 60 L 408 60" class="pipe-arrow-split"/>
+        <!-- Script → Visual (down-right branch) -->
+        <path d="M 310 125 L 310 160 L 408 160" class="pipe-arrow-split"/>
+        <!-- Voice → Human Validation -->
+        <path d="M 528 60 L 580 60 L 580 95" class="pipe-arrow"/>
+        <!-- Visual → Human Validation -->
+        <path d="M 528 160 L 580 160 L 580 125" class="pipe-arrow"/>
+        <!-- Human Validation → Assembly -->
+        <line x1="650" y1="110" x2="708" y2="110" class="pipe-arrow"/>
+        <!-- Assembly → Output -->
+        <line x1="820" y1="110" x2="878" y2="110" class="pipe-arrow"/>
+ 
+        <!-- ── NODES ── -->
+        <!-- Prompt -->
+        <g class="pipe-node" data-step="prompt" transform="translate(20,84)">
+          <rect width="120" height="52" rx="8"/>
+          <text x="60" y="21" text-anchor="middle">Prompt</text>
+          <text x="60" y="37" text-anchor="middle" class="node-sub">User Input</text>
+        </g>
+ 
+        <!-- Script -->
+        <g class="pipe-node" data-step="script" transform="translate(198,84)">
+          <rect width="112" height="52" rx="8"/>
+          <text x="56" y="21" text-anchor="middle">Script</text>
+          <text x="56" y="37" text-anchor="middle" class="node-sub">Gemini LLM</text>
+        </g>
+ 
+        <!-- Voice -->
+        <g class="pipe-node" data-step="voice" transform="translate(408,34)">
+          <rect width="120" height="52" rx="8"/>
+          <text x="60" y="21" text-anchor="middle">Voice</text>
+          <text x="60" y="37" text-anchor="middle" class="node-sub">TTS API</text>
+        </g>
+ 
+        <!-- Visual Generation -->
+        <g class="pipe-node" data-step="visuals" transform="translate(408,134)">
+          <rect width="120" height="52" rx="8"/>
+          <text x="60" y="21" text-anchor="middle">Visuals</text>
+          <text x="60" y="37" text-anchor="middle" class="node-sub">FLUX / LTX-Video</text>
+        </g>
+ 
+        <!-- Human Validation -->
+        <g class="pipe-node special" data-step="validation" transform="translate(540,84)">
+          <rect width="110" height="52" rx="8"/>
+          <text x="55" y="18" text-anchor="middle">Human</text>
+          <text x="55" y="32" text-anchor="middle">Validation</text>
+          <text x="55" y="46" text-anchor="middle" class="node-sub">Review Loop</text>
+        </g>
+ 
+        <!-- Assembly -->
+        <g class="pipe-node" data-step="assembly" transform="translate(708,84)">
+          <rect width="112" height="52" rx="8"/>
+          <text x="56" y="21" text-anchor="middle">Assembly</text>
+          <text x="56" y="37" text-anchor="middle" class="node-sub">MoviePy + FFmpeg</text>
+        </g>
+ 
+        <!-- Output -->
+        <g class="pipe-node" data-step="output" transform="translate(878,84)">
+          <rect width="88" height="52" rx="8"/>
+          <text x="44" y="21" text-anchor="middle">Output</text>
+          <text x="44" y="37" text-anchor="middle" class="node-sub">MP4 9:16</text>
+        </g>
+      </svg>
+ 
+      <!-- Detail panel (shown on node click) -->
+      <div class="pipeline-detail" id="pipelineDetail">
+        <div class="pd-header">
+          <div class="pd-title">
+            <span id="pdTitle">—</span>
+            <span class="pd-badge" id="pdBadge"></span>
+          </div>
+          <button class="pd-close" id="pdClose" aria-label="Close">✕</button>
         </div>
-        <div class="pipeline-step">
-          <svg class="ps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span class="ps-label">Script</span>
-        </div>
-        <div class="pipeline-step">
-          <svg class="ps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-          <span class="ps-label">Voice</span>
-        </div>
-        <div class="pipeline-step">
-          <svg class="ps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <span class="ps-label">Visuals</span>
-        </div>
-        <div class="pipeline-step">
-          <svg class="ps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-          <span class="ps-label">Assembly</span>
-        </div>
-        <div class="pipeline-step">
-          <svg class="ps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-          <span class="ps-label">Output</span>
-        </div>
+        <div class="pd-body" id="pdBody"></div>
       </div>
-      <div class="pipeline-sub-row">
-        <div class="pipeline-sub"><span>User Input</span></div>
-        <div class="pipeline-sub"><span>AI / API</span></div>
-        <div class="pipeline-sub"><span>AI / API</span></div>
-        <div class="pipeline-sub"><span>Local + API</span></div>
-        <div class="pipeline-sub"><span>Automation (FFmpeg)</span></div>
-        <div class="pipeline-sub"><span>Final Video</span></div>
-      </div>
+ 
     </div>
   </div>
 </section>
-
 <!-- ── KEY CAPABILITIES ── -->
 <section class="section">
   <div class="container">
@@ -453,28 +589,23 @@
       <div class="tech-col">
         <div class="tech-col-title">Delivery / Context</div>
         <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Built as an exploratory workflow system for practical experimentation with automated media creation.</p>
-        <div class="delivery-note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          <span>&lt; / &gt; Local + Cloud</span>
+        <div class="delivery">
         </div>
       </div>
 
       <div class="tech-col">
-        <div class="tech-col-title">Architecture Overview</div>
-        <div class="arch-flow">
-          <div class="arch-node">Input<br>Prompt</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Orchestrator</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Generation<br>Services</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Asset<br>Handling</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Assembly<br>Engine</div>
-          <span class="arch-arrow">→</span>
-          <div class="arch-node">Final<br>Output</div>
-        </div>
+        <div class="tech-col-title">Engineering Focus</div>
+        <div class="tech-item"><span class="tech-dot dot-py"></span> Workflow Orchestration</div>
+        <div class="tech-item"><span class="tech-dot dot-ai"></span> AI Model Integration</div>
+        <div class="tech-item"><span class="tech-dot dot-local"></span> Structured JSON Pipelines</div>
+        <div class="tech-item"><span class="tech-dot dot-ff"></span> Timeline Synchronization</div>
+        <div class="tech-item"><span class="tech-dot dot-auto"></span> Local + Cloud AI Execution</div>
       </div>
+
+      
+
+
+
 
     </div>
   </div>
@@ -586,13 +717,166 @@
   }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   setTimeout(() => { document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible')); }, 80);
-
-  /* Animate pipeline steps on hover */
-  document.querySelectorAll('.pipeline-step').forEach((step, i) => {
-    step.addEventListener('mouseenter', () => {
-      document.querySelectorAll('.pipeline-step').forEach(s => s.classList.remove('active'));
-      step.classList.add('active');
+ 
+  /* ── Pipeline interactive detail ── */
+  const STEPS = {
+    prompt: {
+      title: 'Prompt → Script',
+      badge: 'Entry Point',
+      badgeClass: '',
+      desc: 'A single text prompt triggers the entire pipeline. One LLM call to Gemini generates the complete project structure — outputting a full JSON schema that defines the scene breakdown, voiceover text, and visual prompts for every scene. No per-scene LLM calls: the entire narrative is defined upfront.',
+      bullets: [
+        'Single LLM call generates full project structure',
+        'Outputs complete JSON schema with scene breakdown',
+        'Voiceover text and visual prompts defined upfront',
+        'No iterative per-scene generation — one structured pass'
+      ],
+      chips: ['Gemini API', 'JSON Schema', 'Prompt Engineering'],
+      bulletClass: ''
+    },
+    script: {
+      title: 'Script',
+      badge: 'Gemini LLM',
+      badgeClass: '',
+      desc: 'The generated script is the central backbone of the pipeline. It fans out into two parallel branches — Voice synthesis and Visual generation — both of which consume the script\'s content simultaneously. The audio duration measured from voice output becomes the temporal backbone of the entire video timeline.',
+      bullets: [
+        'Script fans out to Voice and Visual generation simultaneously',
+        'Audio duration measured at runtime becomes the timeline reference',
+        'Scene metadata drives model routing for visual generation',
+        'Full structured output consumed by both downstream branches'
+      ],
+      chips: ['Gemini', 'JSON', 'Scene Metadata', 'Parallel Execution'],
+      bulletClass: ''
+    },
+    voice: {
+      title: 'Script → Voice',
+      badge: 'TTS API',
+      badgeClass: '',
+      desc: 'Full voiceover is generated from the complete script in a single TTS API call. The resulting audio file is analysed to extract its exact duration. This duration then becomes the temporal backbone of the entire video timeline — every scene\'s length and transition is derived from the audio, not the other way around.',
+      bullets: [
+        'Full voiceover generated from complete script in one call',
+        'Audio duration measured at runtime with millisecond precision',
+        'Duration becomes the single source of truth for the timeline',
+        'Ensures narration and visuals are always in sync'
+      ],
+      chips: ['TTS API', 'Audio Analysis', 'Timeline Sync'],
+      bulletClass: ''
+    },
+    visuals: {
+      title: 'Script → Visual Generation',
+      badge: 'FLUX / LTX-Video',
+      badgeClass: '',
+      desc: 'Scenes are rendered using a hybrid model approach. FLUX handles high-quality static frame generation, while LTX-Video handles motion synthesis where it is safe to do so (non-anatomical scenes). The routing logic between models is determined by predefined scene metadata embedded in the script JSON.',
+      bullets: [
+        'FLUX for high-quality static frame generation',
+        'LTX-Video for motion synthesis in safe scene types',
+        'Model routing determined by scene metadata from script',
+        'Hybrid approach balances quality, speed, and reliability'
+      ],
+      chips: ['FLUX', 'LTX-Video', 'Local AI', 'Model Routing'],
+      bulletClass: ''
+    },
+    validation: {
+      title: 'Human-in-the-loop Validation',
+      badge: 'Review Layer',
+      badgeClass: 'amber',
+      desc: 'After generation, the frontend acts as a lightweight visual inspection and control layer. Instead of being a passive output viewer, it gives the operator full visibility over generated assets before assembly — introducing a manual correction loop on top of an otherwise fully automated pipeline.',
+      bullets: [
+        'Preview of all generated scenes — images and video clips',
+        'Early detection of visual artifacts or AI hallucinations',
+        'Ability to selectively regenerate individual scenes or adjust prompts',
+        'Operator approval required before final assembly begins'
+      ],
+      chips: ['Frontend Review UI', 'Selective Regen', 'Quality Gate'],
+      bulletClass: 'amber'
+    },
+    assembly: {
+      title: 'Assembly',
+      badge: 'MoviePy + FFmpeg',
+      badgeClass: '',
+      desc: 'All validated assets are assembled into a final video timeline. Scene durations are dynamically calculated based on the audio length measured earlier. Frame-accurate synchronisation ensures there is no drift between narration and visuals throughout the full video.',
+      bullets: [
+        'All validated assets assembled into a single timeline',
+        'Scene durations dynamically calculated from audio length',
+        'Frame-accurate sync — no drift between narration and visuals',
+        'Transitions, captions and overlays applied at assembly stage'
+      ],
+      chips: ['MoviePy', 'FFmpeg', 'Frame-Accurate Sync', 'Automation'],
+      bulletClass: ''
+    },
+    output: {
+      title: 'Output — Final Video Export',
+      badge: 'MP4 · 9:16',
+      badgeClass: '',
+      desc: 'The pipeline concludes with a fully rendered 9:16 vertical video, exported as a single MP4 file. The output includes mixed audio, scene transitions, and any overlay elements defined in the original script. The entire process — from a single text prompt to a finished video.',
+      bullets: [
+        'Fully rendered 9:16 vertical video format',
+        'Exported as a single MP4 file with mixed audio',
+        'Scene transitions and overlays included in final render',
+        'Prompt-to-video with zero manual steps between stages'
+      ],
+      chips: ['MP4', '9:16 Vertical', 'Mixed Audio', 'Single File'],
+      bulletClass: ''
+    }
+  };
+ 
+  const detail   = document.getElementById('pipelineDetail');
+  const pdTitle  = document.getElementById('pdTitle');
+  const pdBadge  = document.getElementById('pdBadge');
+  const pdBody   = document.getElementById('pdBody');
+  const pdClose  = document.getElementById('pdClose');
+  let   activeNode = null;
+ 
+  function openDetail(step) {
+    const d = STEPS[step];
+    if (!d) return;
+ 
+    pdTitle.textContent = d.title;
+    pdBadge.textContent = d.badge;
+    pdBadge.className   = 'pd-badge' + (d.badgeClass ? ' ' + d.badgeClass : '');
+ 
+    const isAmber = d.bulletClass === 'amber';
+    pdBody.innerHTML = `
+      <p class="pd-desc">${d.desc}</p>
+      <div>
+        <div class="pd-section-title">How it works</div>
+        <div class="pd-bullets">
+          ${d.bullets.map(b => `<div class="pd-bullet${isAmber ? ' amber' : ''}">${b}</div>`).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="pd-section-title">Technologies</div>
+        <div class="pd-tech-chips">
+          ${d.chips.map(c => `<span class="pd-chip${isAmber ? ' amber' : ' highlight'}">${c}</span>`).join('')}
+        </div>
+      </div>
+    `;
+    detail.classList.add('open');
+  }
+ 
+  function closeDetail() {
+    detail.classList.remove('open');
+    if (activeNode) { activeNode.classList.remove('active'); activeNode = null; }
+  }
+ 
+  document.querySelectorAll('.pipe-node').forEach(node => {
+    node.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const step = node.dataset.step;
+      if (activeNode === node) { closeDetail(); return; }
+      if (activeNode) activeNode.classList.remove('active');
+      node.classList.add('active');
+      activeNode = node;
+      openDetail(step);
     });
+  });
+ 
+  pdClose.addEventListener('click', closeDetail);
+ 
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#pipelineSvg') && !e.target.closest('#pipelineDetail')) {
+      closeDetail();
+    }
   });
 </script>
 </body>
