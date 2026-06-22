@@ -18,6 +18,7 @@
     --border: #E4E4E4; --border-strong: #C8C8C8;
     --surface: #FFFFFF; --surface-2: #F7F7F6; --surface-3: #F0F0EE;
     --radius: 10px; --radius-lg: 16px;
+    --orange: #e3912c; --orange-light: #f4e5ac;
   }
   html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: #FAFAF9; color: var(--text); font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
@@ -248,6 +249,7 @@
   .outcome-tag.violet { background: var(--violet-light); color: var(--violet-dark); border-color: #C4B5FD; }
   .outcome-tag.blue { background: var(--blue-light); color: var(--blue-dark); border-color: var(--blue-mid); }
   .outcome-tag.green { background: var(--green-light); color: var(--green); border-color: #86EFAC; }
+  .outcome-tag.orange { background: var(--orange-light); color: var(--orange); border-color: #f7a145; }
 
   /* ── CONTACT STRIP ── */
   .contact-strip { padding: 52px 0; border-top: 1px solid var(--border); position: relative; z-index: 1; }
@@ -570,25 +572,17 @@
       <div class="tech-col">
         <div class="tech-col-title">Tech Stack</div>
         <div class="tech-item"><span class="tech-dot dot-py"></span> Python</div>
-        <div class="tech-item"><span class="tech-dot dot-ai"></span> AI APIs</div>
-        <div class="tech-item"><span class="tech-dot dot-local"></span> Local AI Models</div>
-        <div class="tech-item"><span class="tech-dot dot-ff"></span> FFmpeg</div>
-        <div class="tech-item"><span class="tech-dot dot-auto"></span> Automation</div>
+        <div class="tech-item"><span class="tech-dot dot-ai"></span> FastAPI</div>
+        <div class="tech-item"><span class="tech-dot dot-local"></span> Google Gemini</div>
+        <div class="tech-item"><span class="tech-dot dot-ff"></span> MoviePY / FFmpeg</div>
+        <div class="tech-item"><span class="tech-dot dot-auto"></span> FLUX + LTX-Video</div>
       </div>
 
-      <div class="tech-col">
-        <div class="tech-col-title">Workflow Modules</div>
-        <div class="module-item">Prompt Intake</div>
-        <div class="module-item">Script Generation</div>
-        <div class="module-item">Voice Synthesis</div>
-        <div class="module-item">Visual Generation</div>
-        <div class="module-item">Video Assembly</div>
-        <div class="module-item">Output Export</div>
-      </div>
+  
 
       <div class="tech-col">
         <div class="tech-col-title">Delivery / Context</div>
-        <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Built as an exploratory workflow system for practical experimentation with automated media creation.</p>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Built as a personal systems engineering project exploring orchestration of AI models, media processing and automated workflows.</p>
         <div class="delivery">
         </div>
       </div>
@@ -596,10 +590,10 @@
       <div class="tech-col">
         <div class="tech-col-title">Engineering Focus</div>
         <div class="tech-item"><span class="tech-dot dot-py"></span> Workflow Orchestration</div>
-        <div class="tech-item"><span class="tech-dot dot-ai"></span> AI Model Integration</div>
+        <div class="tech-item"><span class="tech-dot dot-ai"></span> Multi-model Orchestration</div>
         <div class="tech-item"><span class="tech-dot dot-local"></span> Structured JSON Pipelines</div>
         <div class="tech-item"><span class="tech-dot dot-ff"></span> Timeline Synchronization</div>
-        <div class="tech-item"><span class="tech-dot dot-auto"></span> Local + Cloud AI Execution</div>
+        <div class="tech-item"><span class="tech-dot dot-auto"></span> Multi-model Orchestration</div>
       </div>
 
       
@@ -621,7 +615,7 @@
         <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg></div>
         <div>
           <div class="demo-title">Connecting multiple AI systems</div>
-          <p class="demo-desc">Brings together local models, AI APIs and automation tools into one coordinated flow.</p>
+          <p class="demo-desc">Coordinates language, image and video models into one workflow.</p>
         </div>
       </div>
 
@@ -636,8 +630,8 @@
       <div class="demo-card reveal rd2">
         <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
         <div>
-          <div class="demo-title">Working from experimentation toward product thinking</div>
-          <p class="demo-desc">Starts as a lab project and evolves toward something useful and repeatable.</p>
+          <div class="demo-title">Solving system constraints</div>
+          <p class="demo-desc">Designs around GPU limits, model capabilities and synchronization challenges.</p>
         </div>
       </div>
 
@@ -645,7 +639,7 @@
         <div class="demo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
         <div>
           <div class="demo-title">Building tools from real workflow pain points</div>
-          <p class="demo-desc">Addresses the friction of manual handoffs in modern content creation.</p>
+          <p class="demo-desc">Turns repetitive multi-tool workflows into one automated process..</p>
         </div>
       </div>
 
@@ -662,12 +656,14 @@
       </div>
       <div class="outcome-body">
         <div class="outcome-title">Outcome</div>
-        <p class="outcome-text">The AI Video Generation Workflow Tool demonstrates how prompt-based media creation can be structured into a repeatable system. It serves as a practical lab for testing automation, orchestration and AI-assisted content workflows.</p>
+        <p class="outcome-text">This project demonstrates how fragmented AI tools can be orchestrated into a deterministic workflow that transforms a single prompt into a synchronized video production pipeline.
+Beyond content generation, it explores workflow design, system orchestration and practical engineering around local and cloud AI models.</p>
       </div>
       <div class="outcome-tags">
         <span class="outcome-tag violet">AI Workflow Lab</span>
         <span class="outcome-tag blue">Python</span>
         <span class="outcome-tag green">Prompt-to-Video</span>
+        <span class="outcome-tag orange">AI-assisted development</span>
       </div>
     </div>
   </div>
@@ -679,26 +675,19 @@
     <div class="contact-strip-inner">
       <div>
         <p class="section-label">Contact</p>
-        <p class="contact-strip-title">Interested in automation, internal tools or practical AI workflows?</p>
-        <p class="contact-strip-sub">I'm interested in building software that turns real process problems into usable tools.</p>
+        <p class="contact-strip-title">Interested in automation, internal tools or practical AI workflows</p>
       </div>
       <div class="contact-links reveal">
         <a href="https://www.linkedin.com/in/richard-jambor-62b9a3309/" target="_blank" rel="noopener" class="btn-primary">
           <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19 0H5C2.239 0 0 2.239 0 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5V5c0-2.761-2.238-5-5-5zM8 19H5V8h3v11zM6.5 6.732c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zM20 19h-3v-5.604c0-3.368-4-3.113-4 0V19h-3V8h3v1.765c1.396-2.586 7-2.777 7 2.476V19z"/></svg>
           LinkedIn
         </a>
-        <a href="https://github.com/richardjambor" target="_blank" rel="noopener" class="btn-secondary">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-          GitHub
-        </a>
-        <a href="mailto:richard@example.com" class="btn-secondary">
+        
+        <a href="mailto:jamby.risa@gmail.com" class="btn-secondary">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Email
         </a>
-        <a href="https://apps.apple.com/us/app/budflow/id6757763758" target="_blank" rel="noopener" class="btn-secondary">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-          App Store
-        </a>
+        
       </div>
     </div>
   </div>
@@ -706,8 +695,8 @@
 
 <footer>
   <div class="footer-inner">
-    <span class="footer-copy">© 2025 Richard Jambor</span>
-    <span class="footer-copy">AI Video Generation Workflow Tool</span>
+    <span class="footer-copy">© 2026 Richard Jambor</span>
+    <span class="footer-copy">AI Content Orchestrator</span>
   </div>
 </footer>
 
