@@ -203,6 +203,231 @@
     .pd-desc { grid-column: span 1; }
   }
 
+  /* ── INSIDE THE WORKFLOW ── */
+  .itw-header { display: flex; align-items: center; justify-content: space-between; gap: 32px; margin-bottom: 24px; flex-wrap: nowrap; }
+  .itw-header-left { flex: 1; min-width: 0; }
+  .itw-header-left h2 { font-family: 'Instrument Serif', serif; font-size: clamp(22px, 2.5vw, 30px); letter-spacing: -0.4px; margin-bottom: 6px; }
+  .itw-header-left p { font-size: 14px; color: var(--text-2); }
+  /* Watch Demo */
+  .itw-watch-demo { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: var(--violet-light); border: 1px solid #C4B5FD; border-radius: var(--radius-lg); padding: 14px 18px; min-width: 380px; flex-shrink: 0; transition: box-shadow 0.18s, border-color 0.18s; cursor: pointer; }
+  .itw-watch-demo:hover { border-color: var(--violet); box-shadow: 0 4px 16px rgba(124,58,237,0.12); }
+  .itw-watch-inner { display: flex; align-items: center; gap: 12px; }
+  .itw-watch-icon { width: 32px; height: 32px; border-radius: 8px; background: white; border: 1px solid #C4B5FD; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--violet); }
+  .itw-watch-title { font-size: 13px; font-weight: 500; color: var(--text); }
+  .itw-watch-sub { font-size: 12px; color: var(--text-3); margin-top: 1px; }
+  .itw-watch-btn { background: var(--violet); color: white; border: none; padding: 8px 14px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; font-family: 'DM Sans', sans-serif; flex-shrink: 0; }
+  .itw-watch-btn:hover { background: #6D28D9; }
+  /* Carousel */
+  .carousel-wrap { position: relative; margin-bottom: 8px; }
+  .carousel-track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; scroll-behavior: smooth; }
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .c-card { flex: 0 0 calc(20% - 13px); min-width: 200px; scroll-snap-align: start; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s; }
+  .c-card:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .c-thumb { aspect-ratio: 16/10; background: #111827; position: relative; overflow: hidden; }
+  .c-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .c-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 100%; }
+  .c-placeholder svg { width: 24px; height: 24px; opacity: 0.25; color: #666; }
+  .c-placeholder span { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #555; text-align: center; }
+  .c-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.2s; }
+  .c-overlay.always { opacity: 1; background: rgba(0,0,0,0.3); }
+  .c-card:hover .c-overlay { opacity: 1; }
+  .c-play-btn { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
+  .c-duration { position: absolute; bottom: 7px; right: 8px; background: rgba(0,0,0,0.75); color: white; font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 4px; }
+  .c-body { padding: 12px 14px; }
+  .c-label { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .c-sub { font-size: 12px; color: var(--text-3); line-height: 1.5; }
+  .carousel-arrow { position: absolute; top: calc(50% - 20px); transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border-strong); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: background 0.15s, box-shadow 0.15s; z-index: 10; color: var(--text); }
+  .carousel-arrow:hover { background: var(--surface-2); box-shadow: 0 4px 14px rgba(0,0,0,0.14); }
+  .carousel-prev { left: -18px; } .carousel-next { right: -18px; }
+  .carousel-arrow.hidden { opacity: 0; pointer-events: none; }
+  .itw-outputs-header { display: flex; align-items: flex-end; justify-content: space-between; margin: 36px 0 20px; }
+  .itw-outputs-title { font-family: 'Instrument Serif', serif; font-size: clamp(20px, 2.2vw, 26px); letter-spacing: -0.3px; margin-bottom: 4px; }
+  .itw-outputs-sub { font-size: 14px; color: var(--text-2); }
+  /* Evolution — cards + separate gap elements between them */
+  .evo-track {
+    display: flex;
+    align-items: center;   /* vertically centre everything on the same axis */
+    gap: 0;
+  }
+  /* Card */
+  .evo-card {
+    flex: 1;
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px 16px;
+    align-self: stretch;   /* cards stretch to tallest */
+  }
+  .evo-card.current-ver { background: var(--violet-light); border-color: #C4B5FD; }
+  .evo-version { font-family: 'IBM Plex Mono', monospace; font-size: 11px; margin-bottom: 8px; }
+  .ver-num { color: var(--violet); font-weight: 500; }
+  .ver-name { color: var(--text); font-weight: 500; }
+  .evo-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 10px; }
+  .evo-date { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); }
+  /* Gap element — sits between every two cards */
+  .evo-gap {
+    flex-shrink: 0;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    align-self: center;
+  }
+  /* Horizontal line filling the full gap width */
+  .evo-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  /* Circle sitting at the RIGHT end of the gap (= left edge of the next card) */
+  .evo-circle {
+    position: absolute;
+    right: -5px;           /* half of 10px circle, so it straddles the card boundary */
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-strong);
+    background: var(--surface);
+    z-index: 2;
+  }
+  /* Lightbox */
+  .lb-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 24px; }
+  .lb-overlay.open { display: flex; }
+  .lb-box { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 32px 80px rgba(0,0,0,0.5); }
+  .lb-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface-2); flex-shrink: 0; }
+  .lb-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .lb-close { background: none; border: none; cursor: pointer; color: var(--text-3); font-size: 20px; line-height: 1; padding: 2px 7px; border-radius: 4px; transition: background 0.15s; font-family: sans-serif; }
+  .lb-close:hover { background: var(--surface-3); color: var(--text); }
+  .lb-media { flex: 1; overflow: auto; background: #111; display: flex; align-items: center; justify-content: center; min-height: 200px; }
+  .lb-media img { max-width: 100%; max-height: 72vh; display: block; object-fit: contain; }
+  .lb-media video { max-width: 100%; max-height: 72vh; display: block; outline: none; }
+  .lb-media .lb-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 48px; color: #555; }
+  .lb-media .lb-empty svg { width: 36px; height: 36px; opacity: 0.25; }
+  .lb-media .lb-empty p { font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-align: center; line-height: 1.6; }
+  .lb-footer { padding: 12px 18px; border-top: 1px solid var(--border); background: var(--surface-2); flex-shrink: 0; }
+  .lb-desc { font-size: 13px; color: var(--text-2); }
+
+  /* Screenshot grid */
+  .itw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .itw-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; cursor: pointer;
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .itw-card:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
+  .itw-card[data-cat="output"] .itw-thumb-wrap { aspect-ratio: 9/16; max-height: 260px; }
+  .itw-thumb-wrap {
+    aspect-ratio: 16/10; background: #111827; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .itw-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .itw-thumb-placeholder {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; width: 100%; height: 100%; color: #3A3A5C;
+  }
+  .itw-thumb-placeholder svg { width: 28px; height: 28px; opacity: 0.4; }
+  .itw-thumb-placeholder span { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #555; text-align: center; line-height: 1.5; padding: 0 12px; }
+  /* video play overlay */
+  .itw-thumb-wrap .play-overlay {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.2s;
+  }
+  .itw-card:hover .play-overlay { opacity: 1; }
+  .play-btn {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .play-btn svg { width: 20px; height: 20px; color: var(--text); margin-left: 3px; }
+  /* duration badge */
+  .itw-duration {
+    position: absolute; bottom: 8px; right: 8px;
+    background: rgba(0,0,0,0.75); color: white;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500;
+    padding: 2px 7px; border-radius: 4px;
+  }
+  /* cat badge */
+  .itw-cat-badge {
+    position: absolute; top: 8px; left: 8px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500;
+    padding: 2px 8px; border-radius: 4px; background: rgba(0,0,0,0.6); color: white;
+  }
+  .itw-card-body { padding: 14px 16px; }
+  .itw-card-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .itw-card-sub { font-size: 12px; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; }
+
+  /* Lightbox */
+  .itw-lightbox {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  .itw-lightbox.open { display: flex; }
+  .itw-lb-inner {
+    background: var(--surface); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: 880px; width: 100%;
+    max-height: 90vh; display: flex; flex-direction: column;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  }
+  .itw-lb-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface-2);
+    flex-shrink: 0;
+  }
+  .itw-lb-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .itw-lb-close {
+    background: none; border: none; cursor: pointer; color: var(--text-3);
+    font-size: 20px; line-height: 1; padding: 2px 6px; border-radius: 4px;
+    transition: background 0.15s; font-family: sans-serif;
+  }
+  .itw-lb-close:hover { background: var(--surface-3); color: var(--text); }
+  .itw-lb-media { flex: 1; overflow: auto; background: #111; display: flex; align-items: center; justify-content: center; min-height: 200px; }
+  .itw-lb-media img { max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
+  .itw-lb-media video { max-width: 100%; max-height: 70vh; display: block; outline: none; }
+  .itw-lb-media .lb-placeholder {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    padding: 48px; color: #555;
+  }
+  .itw-lb-media .lb-placeholder svg { width: 40px; height: 40px; opacity: 0.3; }
+  .itw-lb-media .lb-placeholder p { font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-align: center; line-height: 1.6; }
+  .itw-lb-footer { padding: 12px 18px; border-top: 1px solid var(--border); background: var(--surface-2); flex-shrink: 0; }
+  .itw-lb-desc { font-size: 13px; color: var(--text-2); }
+
+  /* Project Evolution timeline */
+  .evolution-track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 28px; position: relative; }
+  .evolution-track::before {
+    content: ''; position: absolute; top: 18px; left: 10%; right: 10%;
+    height: 1px; background: var(--border);
+  }
+  .evo-item { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0 8px; position: relative; }
+  .evo-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border-strong); background: var(--surface); position: relative; z-index: 1; flex-shrink: 0; }
+  .evo-dot.done { border-color: var(--violet); background: var(--violet); }
+  .evo-dot.current { border-color: var(--violet); background: var(--violet-light); }
+  .evo-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 14px 12px; width: 100%; }
+  .evo-card.current-ver { background: var(--violet-light); border-color: #C4B5FD; }
+  .evo-version { font-family: 'IBM Plex Mono', monospace; font-size: 10px; margin-bottom: 4px; }
+  .evo-version .ver-num { color: var(--violet); font-weight: 500; }
+  .evo-version .ver-name { color: var(--text); font-weight: 500; }
+  .evo-desc { font-size: 12px; color: var(--text-2); line-height: 1.55; margin-bottom: 6px; }
+  .evo-date { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-3); }
+
+  @media (max-width: 900px) {
+    .itw-watch-demo { min-width: unset; width: 100%; }
+    .itw-header { flex-direction: column; }
+    .c-card { flex: 0 0 calc(33.33% - 11px); }
+    .evo-track { flex-wrap: wrap; gap: 14px; }
+    .evo-track::before { display: none; }
+    .evo-item { flex: 0 0 calc(50% - 7px); }
+    .carousel-prev { left: 0; } .carousel-next { right: 0; }
+  }
+  @media (max-width: 600px) {
+    .c-card { flex: 0 0 calc(80% - 13px); }
+    .evo-item { flex: 0 0 100%; }
+  }
+
   /* ── KEY CAPABILITIES ── */
   .capabilities-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; }
   .cap-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s; }
@@ -534,6 +759,254 @@
     </div>
   </div>
 </section>
+<!-- ── INSIDE THE WORKFLOW ── -->
+<section class="section" id="inside">
+  <div class="container">
+
+    <!-- Header: title+desc on left, Watch Demo box on right — same row -->
+    <div class="itw-header reveal">
+      <div class="itw-header-left">
+        <h2>Inside the Workflow</h2>
+        <p>A look inside the application, the workflow in action and examples of generated videos.</p>
+      </div>
+      <div class="itw-watch-demo" onclick="openDemo()">
+        <div class="itw-watch-inner">
+          <div class="itw-watch-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <div>
+            <div class="itw-watch-title">See the workflow in action</div>
+            <div class="itw-watch-sub">From prompt to final video in ~30 seconds.</div>
+          </div>
+        </div>
+        <button class="itw-watch-btn" onclick="openDemo()">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Watch Demo
+        </button>
+      </div>
+    </div>
+
+    <!-- Carousel: Frontend screenshots -->
+    <div class="carousel-wrap reveal rd1">
+      <div class="carousel-track" id="track1">
+
+        <div class="c-card" data-title="Dashboard" data-desc="Configure generation settings, choose models and start the pipeline." data-type="image" data-src="assets/screenshots/dashboard.png">
+          <div class="c-thumb">
+            <img src="assets/screenshots/dashboard.png" alt="Dashboard" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><path d=\'M3 9h18\'/></svg><span>dashboard.png</span></div>'"/>
+            <div class="c-overlay"><div class="c-play-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div></div>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Dashboard</div>
+            <div class="c-sub">Configure generation settings, choose models and start the pipeline.</div>
+          </div>
+        </div>
+
+        <div class="c-card" data-title="Workflow View" data-desc="Visual overview of the pipeline and each stage status in real time." data-type="image" data-src="assets/screenshots/workflow.png">
+          <div class="c-thumb">
+            <img src="assets/screenshots/workflow.png" alt="Workflow" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><circle cx=\'18\' cy=\'18\' r=\'3\'/><circle cx=\'6\' cy=\'6\' r=\'3\'/><path d=\'M13 6h3a2 2 0 0 1 2 2v7\'/><line x1=\'6\' y1=\'9\' x2=\'6\' y2=\'21\'/></svg><span>workflow.png</span></div>'"/>
+            <div class="c-overlay"><div class="c-play-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div></div>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Workflow</div>
+            <div class="c-sub">Visual overview of the pipeline and each stage status in real time.</div>
+          </div>
+        </div>
+
+        <div class="c-card" data-title="Assets Browser" data-desc="Browse generated assets: scripts, voice, images and video clips." data-type="image" data-src="assets/screenshots/assets.png">
+          <div class="c-thumb">
+            <img src="assets/screenshots/assets.png" alt="Assets" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>assets.png</span></div>'"/>
+            <div class="c-overlay"><div class="c-play-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div></div>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Assets</div>
+            <div class="c-sub">Browse generated assets: scripts, voice, images and video clips.</div>
+          </div>
+        </div>
+
+        <div class="c-card" data-title="Timeline" data-desc="See how scenes, audio and visuals are synchronized before rendering." data-type="image" data-src="assets/screenshots/timeline.png">
+          <div class="c-thumb">
+            <img src="assets/screenshots/timeline.png" alt="Timeline" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><line x1=\'3\' y1=\'9\' x2=\'21\' y2=\'9\'/><line x1=\'3\' y1=\'15\' x2=\'21\' y2=\'15\'/></svg><span>timeline.png</span></div>'"/>
+            <div class="c-overlay"><div class="c-play-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div></div>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Timeline</div>
+            <div class="c-sub">See how scenes, audio and visuals are synchronized before rendering.</div>
+          </div>
+        </div>
+
+        <div class="c-card" data-title="Output Preview" data-desc="Final vertical video ready for export (9:16)." data-type="image" data-src="assets/screenshots/output.png">
+          <div class="c-thumb">
+            <img src="assets/screenshots/output.png" alt="Output" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><polygon points=\'23 7 16 12 23 17 23 7\'/><rect x=\'1\' y=\'5\' width=\'15\' height=\'14\' rx=\'2\'/></svg><span>output.png</span></div>'"/>
+            <div class="c-overlay"><div class="c-play-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div></div>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Output</div>
+            <div class="c-sub">Final vertical video ready for export (9:16).</div>
+          </div>
+        </div>
+
+      </div>
+      <button class="carousel-arrow carousel-prev" data-track="track1" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="carousel-arrow carousel-next" data-track="track1" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <!-- Example Outputs header -->
+    <div class="itw-outputs-header reveal">
+      <div>
+        <h3 class="itw-outputs-title">Example Outputs</h3>
+        <p class="itw-outputs-sub">Several examples generated with the current pipeline.</p>
+      </div>
+    </div>
+
+    <!-- Carousel: Output videos -->
+    <div class="carousel-wrap reveal rd1">
+      <div class="carousel-track" id="track2">
+
+        <div class="c-card" data-title="Space Exploration" data-desc="Narration + AI visuals. Generated from a single prompt about space exploration." data-type="video" data-src="assets/videos/space.mp4" data-thumb="assets/thumbs/space.jpg">
+          <div class="c-thumb">
+            <img src="assets/thumbs/space.jpg" alt="Space Exploration" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder dark\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><polygon points=\'23 7 16 12 23 17 23 7\'/><rect x=\'1\' y=\'5\' width=\'15\' height=\'14\' rx=\'2\'/></svg><span>space.mp4</span></div>'"/>
+            <div class="c-overlay always">
+              <div class="c-play-btn"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            </div>
+            <span class="c-duration">0:28</span>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Space Exploration</div>
+            <div class="c-sub">Narration + AI visuals</div>
+          </div>
+        </div>
+
+        <div class="c-card" data-title="Roman Empire" data-desc="Narration + AI visuals. Historical documentary style generated with FLUX imagery." data-type="video" data-src="assets/videos/roman.mp4" data-thumb="assets/thumbs/roman.jpg">
+          <div class="c-thumb">
+            <img src="assets/thumbs/roman.jpg" alt="Roman Empire" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder dark\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><polygon points=\'23 7 16 12 23 17 23 7\'/><rect x=\'1\' y=\'5\' width=\'15\' height=\'14\' rx=\'2\'/></svg><span>roman.mp4</span></div>'"/>
+            <div class="c-overlay always">
+              <div class="c-play-btn"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            </div>
+            <span class="c-duration">0:31</span>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Roman Empire</div>
+            <div class="c-sub">Narration + AI visuals</div>
+          </div>
+        </div>
+
+        <div class="c-card" data-title="The Radium Girls" data-desc="Narration + AI visuals. Historical story with period-accurate visual style." data-type="video" data-src="assets/videos/radium.mp4" data-thumb="assets/thumbs/radium.jpg">
+          <div class="c-thumb">
+            <img src="assets/thumbs/radium.jpg" alt="The Radium Girls" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder dark\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><polygon points=\'23 7 16 12 23 17 23 7\'/><rect x=\'1\' y=\'5\' width=\'15\' height=\'14\' rx=\'2\'/></svg><span>radium.mp4</span></div>'"/>
+            <div class="c-overlay always">
+              <div class="c-play-btn"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            </div>
+            <span class="c-duration">0:27</span>
+          </div>
+          <div class="c-body">
+            <div class="c-label">The Radium Girls</div>
+            <div class="c-sub">Narration + AI visuals</div>
+          </div>
+        </div>
+
+        <div class="c-card" data-title="Nature Moments" data-desc="Narration + AI visuals. Nature documentary style with LTX-Video motion synthesis." data-type="video" data-src="assets/videos/nature.mp4" data-thumb="assets/thumbs/nature.jpg">
+          <div class="c-thumb">
+            <img src="assets/thumbs/nature.jpg" alt="Nature Moments" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder dark\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><polygon points=\'23 7 16 12 23 17 23 7\'/><rect x=\'1\' y=\'5\' width=\'15\' height=\'14\' rx=\'2\'/></svg><span>nature.mp4</span></div>'"/>
+            <div class="c-overlay always">
+              <div class="c-play-btn"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            </div>
+            <span class="c-duration">0:25</span>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Nature Moments</div>
+            <div class="c-sub">Narration + AI visuals</div>
+          </div>
+        </div>
+
+        <div class="c-card" data-title="Future City" data-desc="Narration + AI visuals. Near-future urban concept with motion synthesis." data-type="video" data-src="assets/videos/city.mp4" data-thumb="assets/thumbs/city.jpg">
+          <div class="c-thumb">
+            <img src="assets/thumbs/city.jpg" alt="Future City" onerror="this.parentElement.innerHTML='<div class=\'c-placeholder dark\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\'><polygon points=\'23 7 16 12 23 17 23 7\'/><rect x=\'1\' y=\'5\' width=\'15\' height=\'14\' rx=\'2\'/></svg><span>city.mp4</span></div>'"/>
+            <div class="c-overlay always">
+              <div class="c-play-btn"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            </div>
+            <span class="c-duration">0:29</span>
+          </div>
+          <div class="c-body">
+            <div class="c-label">Future City</div>
+            <div class="c-sub">Narration + AI visuals</div>
+          </div>
+        </div>
+
+      </div>
+      <button class="carousel-arrow carousel-prev" data-track="track2" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="carousel-arrow carousel-next" data-track="track2" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PROJECT EVOLUTION ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label reveal">Project Evolution</p>
+    <p class="reveal rd1" style="font-size:14px;color:var(--text-2);margin-top:4px;margin-bottom:32px;">Continuous improvement, one milestone at a time.</p>
+
+    <div class="evo-track reveal rd1">
+
+      <div class="evo-card">
+        <div class="evo-version"><span class="ver-num">v0.1</span> <span class="ver-name">Prototype</span></div>
+        <div class="evo-desc">Basic prompt → script → voice pipeline. Proof of concept.</div>
+        <div class="evo-date">Jan 2025</div>
+      </div>
+      <div class="evo-gap"><div class="evo-line"></div><div class="evo-circle"></div></div>
+
+      <div class="evo-card">
+        <div class="evo-version"><span class="ver-num">v0.3</span> <span class="ver-name">Structured Output</span></div>
+        <div class="evo-desc">Introduced JSON scene plan and validation.</div>
+        <div class="evo-date">Feb 2025</div>
+      </div>
+      <div class="evo-gap"><div class="evo-line"></div><div class="evo-circle"></div></div>
+
+      <div class="evo-card">
+        <div class="evo-version"><span class="ver-num">v0.5</span> <span class="ver-name">Local Images</span></div>
+        <div class="evo-desc">Integrated FLUX for high-quality image generation.</div>
+        <div class="evo-date">Mar 2025</div>
+      </div>
+      <div class="evo-gap"><div class="evo-line"></div><div class="evo-circle"></div></div>
+
+      <div class="evo-card">
+        <div class="evo-version"><span class="ver-num">v0.7</span> <span class="ver-name">Timeline Sync</span></div>
+        <div class="evo-desc">Dynamic audio analysis and scene timing.</div>
+        <div class="evo-date">Apr 2025</div>
+      </div>
+      <div class="evo-gap"><div class="evo-line"></div><div class="evo-circle"></div></div>
+
+      <div class="evo-card current-ver">
+        <div class="evo-version"><span class="ver-num">v1.0</span> <span class="ver-name">Current</span></div>
+        <div class="evo-desc">Full pipeline with LTX-Video, routing, human validation &amp; rendering.</div>
+        <div class="evo-date">May 2025</div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lb-overlay" id="lbOverlay">
+  <div class="lb-box">
+    <div class="lb-header">
+      <span class="lb-title" id="lbTitle2">—</span>
+      <button class="lb-close" id="lbClose2">✕</button>
+    </div>
+    <div class="lb-media" id="lbMedia2"></div>
+    <div class="lb-footer"><p class="lb-desc" id="lbDesc2"></p></div>
+  </div>
+</div>
+
 <!-- ── KEY CAPABILITIES ── -->
 <section class="section">
   <div class="container">
@@ -859,14 +1332,86 @@ Beyond content generation, it explores workflow design, system orchestration and
       openDetail(step);
     });
   });
- 
+
   pdClose.addEventListener('click', closeDetail);
- 
+
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#pipelineSvg') && !e.target.closest('#pipelineDetail')) {
       closeDetail();
     }
   });
+
+  /* ── Carousels ── */
+  function initCarousel(trackId) {
+    const track = document.getElementById(trackId);
+    if (!track) return;
+    const wrap  = track.closest('.carousel-wrap');
+    const prev  = wrap.querySelector('.carousel-prev');
+    const next  = wrap.querySelector('.carousel-next');
+    const card  = track.querySelector('.c-card');
+    if (!card) return;
+
+    function getStep() {
+      const style = getComputedStyle(track);
+      return card.offsetWidth + parseInt(style.gap || 16);
+    }
+    function updateArrows() {
+      prev.classList.toggle('hidden', track.scrollLeft <= 4);
+      next.classList.toggle('hidden', track.scrollLeft + track.clientWidth >= track.scrollWidth - 4);
+    }
+    prev.addEventListener('click', () => { track.scrollBy({ left: -getStep() * 1, behavior: 'smooth' }); });
+    next.addEventListener('click', () => { track.scrollBy({ left:  getStep() * 1, behavior: 'smooth' }); });
+    track.addEventListener('scroll', updateArrows, { passive: true });
+    updateArrows();
+  }
+  initCarousel('track1');
+  initCarousel('track2');
+
+  /* ── Lightbox ── */
+  const lbOverlay = document.getElementById('lbOverlay');
+  const lbTitle2  = document.getElementById('lbTitle2');
+  const lbMedia2  = document.getElementById('lbMedia2');
+  const lbDesc2   = document.getElementById('lbDesc2');
+  const lbClose2  = document.getElementById('lbClose2');
+
+  function openLb(card) {
+    const type  = card.dataset.type;
+    const src   = card.dataset.src;
+    const title = card.dataset.title;
+    const desc  = card.dataset.desc;
+    lbTitle2.textContent = title;
+    lbDesc2.textContent  = desc;
+    if (type === 'video') {
+      lbMedia2.innerHTML = src
+        ? `<video src="${src}" controls autoplay playsinline></video>`
+        : `<div class="lb-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><p>Add video to<br><code>assets/videos/</code></p></div>`;
+    } else {
+      lbMedia2.innerHTML = src
+        ? `<img src="${src}" alt="${title}">`
+        : `<div class="lb-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><p>Add screenshot to<br><code>assets/screenshots/</code></p></div>`;
+    }
+    lbOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLb() {
+    lbOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+    const vid = lbMedia2.querySelector('video');
+    if (vid) { vid.pause(); vid.src = ''; }
+    lbMedia2.innerHTML = '';
+  }
+
+  document.querySelectorAll('.c-card').forEach(c => c.addEventListener('click', () => openLb(c)));
+  lbClose2.addEventListener('click', closeLb);
+  lbOverlay.addEventListener('click', e => { if (e.target === lbOverlay) closeLb(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+  /* Watch Demo */
+  function openDemo() {
+    const fakeCard = { dataset: { type: 'video', src: 'assets/videos/demo.mp4', title: 'Workflow Demo', desc: 'From prompt to final video in ~30 seconds.' } };
+    openLb(fakeCard);
+  }
 </script>
 </body>
 </html>
